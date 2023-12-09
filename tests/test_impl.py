@@ -63,7 +63,7 @@ async def test_create_connection_single_addr_success(m_socket: ModuleType) -> No
         family=socket.AF_INET,
         type=socket.SOCK_STREAM,
         proto=socket.IPPROTO_TCP,
-        fileno=mock.MagicMock(return_value=1000),
+        fileno=mock.MagicMock(return_value=1),
     )
 
     def _socket(*args, **kw):
