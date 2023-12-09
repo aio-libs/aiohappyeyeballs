@@ -7,7 +7,7 @@ from unittest import mock
 
 import pytest
 
-from aiohappyeyeballs import create_connection
+from aiohappyeyeballs import start_connection
 
 
 def mock_socket_module():
@@ -43,7 +43,7 @@ def patch_socket(f):
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_single_addr_info_errors(m_socket: ModuleType) -> None:
+async def test_start_connection_single_addr_info_errors(m_socket: ModuleType) -> None:
     idx = -1
     errors = ["err1", "err2"]
 
@@ -63,12 +63,12 @@ async def test_create_connection_single_addr_info_errors(m_socket: ModuleType) -
         )
     ]
     with pytest.raises(OSError, match=errors[0]):
-        await create_connection(addr_info)
+        await start_connection(addr_info)
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_single_addr_success(m_socket: ModuleType) -> None:
+async def test_start_connection_single_addr_success(m_socket: ModuleType) -> None:
     mock_socket = mock.MagicMock(
         family=socket.AF_INET,
         type=socket.SOCK_STREAM,
@@ -91,12 +91,12 @@ async def test_create_connection_single_addr_success(m_socket: ModuleType) -> No
     ]
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", return_value=None):
-        assert await create_connection(addr_info) == mock_socket
+        assert await start_connection(addr_info) == mock_socket
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_multiple_addr_success_second_one(
+async def test_start_connection_multiple_addr_success_second_one(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -134,12 +134,12 @@ async def test_create_connection_multiple_addr_success_second_one(
     ]
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", return_value=None):
-        assert await create_connection(addr_info) == mock_socket
+        assert await start_connection(addr_info) == mock_socket
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_multiple_addr_success_second_one_happy_eyeballs(
+async def test_start_connection_multiple_addr_success_second_one_happy_eyeballs(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -178,13 +178,13 @@ async def test_create_connection_multiple_addr_success_second_one_happy_eyeballs
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", return_value=None):
         assert (
-            await create_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
+            await start_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
         )
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_multiple_addr_all_fail_happy_eyeballs(
+async def test_start_connection_multiple_addr_all_fail_happy_eyeballs(
     m_socket: ModuleType,
 ) -> None:
     mock.MagicMock(
@@ -220,12 +220,12 @@ async def test_create_connection_multiple_addr_all_fail_happy_eyeballs(
     ]
     asyncio.get_running_loop()
     with pytest.raises(OSError, match=errors[0]):
-        await create_connection(addr_info, happy_eyeballs_delay=0.3)
+        await start_connection(addr_info, happy_eyeballs_delay=0.3)
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_ipv6_fails(
+async def test_start_connection_ipv6_and_ipv4_happy_eyeballs_ipv6_fails(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -261,14 +261,14 @@ async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_ipv6_fails(
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", return_value=None):
         assert (
-            await create_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
+            await start_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
         )
     assert mock_socket.family == socket.AF_INET
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_ipv4_fails(
+async def test_start_connection_ipv6_and_ipv4_happy_eyeballs_ipv4_fails(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -306,14 +306,14 @@ async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_ipv4_fails(
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", return_value=None):
         assert (
-            await create_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
+            await start_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
         )
     assert mock_socket.family == socket.AF_INET6
 
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_first_ipv6_fails(
+async def test_start_connection_ipv6_and_ipv4_happy_eyeballs_first_ipv6_fails(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -364,7 +364,7 @@ async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_first_ipv6_fails(
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", _sock_connect):
         assert (
-            await create_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
+            await start_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
         )
 
     # IPv6 addresses are tried first, but the first one fails so IPv4 wins
@@ -374,7 +374,7 @@ async def test_create_connection_ipv6_and_ipv4_happy_eyeballs_first_ipv6_fails(
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_ipv64_happy_eyeballs_interleave_2_first_ipv6_fails(
+async def test_start_connection_ipv64_happy_eyeballs_interleave_2_first_ipv6_fails(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -425,7 +425,7 @@ async def test_create_connection_ipv64_happy_eyeballs_interleave_2_first_ipv6_fa
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", _sock_connect):
         assert (
-            await create_connection(addr_info, happy_eyeballs_delay=0.3, interleave=2)
+            await start_connection(addr_info, happy_eyeballs_delay=0.3, interleave=2)
             == mock_socket
         )
 
@@ -437,7 +437,7 @@ async def test_create_connection_ipv64_happy_eyeballs_interleave_2_first_ipv6_fa
 
 @pytest.mark.asyncio
 @patch_socket
-async def test_create_connection_ipv6_only_happy_eyeballs_first_ipv6_fails(
+async def test_start_connection_ipv6_only_happy_eyeballs_first_ipv6_fails(
     m_socket: ModuleType,
 ) -> None:
     mock_socket = mock.MagicMock(
@@ -481,7 +481,7 @@ async def test_create_connection_ipv6_only_happy_eyeballs_first_ipv6_fails(
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", _sock_connect):
         assert (
-            await create_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
+            await start_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
         )
 
     # IPv6 address are tried first, but the first one fails so second IPv6 wins

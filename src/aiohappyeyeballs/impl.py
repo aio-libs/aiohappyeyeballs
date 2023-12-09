@@ -16,7 +16,7 @@ AddrInfoType = Tuple[
 ]
 
 
-async def create_connection(
+async def start_connection(
     addr_infos: Sequence[AddrInfoType],
     *,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
