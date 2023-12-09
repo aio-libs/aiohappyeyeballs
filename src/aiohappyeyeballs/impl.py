@@ -18,7 +18,6 @@ async def create_connection(
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
     happy_eyeballs_delay: Optional[float] = None,
     interleave: Optional[int] = None,
-    all_errors: bool = False,
     loop: Optional[asyncio.AbstractEventLoop] = None,
 ) -> socket.socket:
     """
@@ -70,8 +69,6 @@ async def create_connection(
     if sock is None:
         all_exceptions = [exc for sub in exceptions for exc in sub]
         try:
-            if all_errors:
-                raise ExceptionGroup("create_connection failed", all_exceptions)
             if len(all_exceptions) == 1:
                 raise all_exceptions[0]
             else:
