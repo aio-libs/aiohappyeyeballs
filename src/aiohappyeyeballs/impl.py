@@ -23,14 +23,25 @@ async def create_connection(
     """
     Connect to a TCP server.
 
-    Create a streaming transport connection to a given internet host and
-    port: socket family AF_INET or socket.AF_INET6 depending on host (or
-    family if specified), socket type SOCK_STREAM. protocol_factory must be
-    a callable returning a protocol instance.
+    Create a socket connection to a specified destination.  The
+    destination is specified as a list of AddrInfoType tuples as
+    returned from getaddrinfo().
+
+    The arguments are, in order:
+
+    * ``family``: the address family, e.g. ``socket.AF_INET`` or
+        ``socket.AF_INET6``.
+    * ``type``: the socket type, e.g. ``socket.SOCK_STREAM`` or
+        ``socket.SOCK_DGRAM``.
+    * ``proto``: the protocol, e.g. ``socket.IPPROTO_TCP`` or
+        ``socket.IPPROTO_UDP``.
+    * ``canonname``: the canonical name of the address, e.g.
+        ``"www.python.org"``.
+    * ``sockaddr``: the socket address
 
     This method is a coroutine which will try to establish the connection
     in the background.  When successful, the coroutine returns a
-    (transport, protocol) pair.
+    socket.
     """
     if not (current_loop := loop):
         current_loop = asyncio.get_running_loop()
