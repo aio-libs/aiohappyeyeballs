@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for ipv6 failure (#9) ([`7aee8f6`](https://github.com/bdraco/aiohappyeyeballs/commit/7aee8f64064cfc8d79f385c4dfee45036aacd6fd))
+
 ## v0.6.0 (2023-12-09)
 
 ### Feature
