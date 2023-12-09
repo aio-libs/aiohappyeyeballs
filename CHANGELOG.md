@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.0 (2023-12-09)
+
+### Feature
+
+- Improve doc strings (#7) ([`3d5f7fd`](https://github.com/bdraco/aiohappyeyeballs/commit/3d5f7fde55c4bdd4f5e6cff589ae9b47b279d663))
+
 ## v0.4.0 (2023-12-09)
 
 ### Feature
