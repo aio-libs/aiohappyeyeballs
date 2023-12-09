@@ -138,7 +138,7 @@ async def _connect_sock(
                     msg = (
                         f"error while attempting to bind on "
                         f"address {laddr!r}: "
-                        f"{exc.strerror.lower()}"
+                        f"{str(exc).lower()}"
                     )
                     exc = OSError(exc.errno, msg)
                     my_exceptions.append(exc)
