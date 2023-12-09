@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.0 (2023-12-09)
+
+### Feature
+
+- Improve test coverage (#8) ([`afcfe5a`](https://github.com/bdraco/aiohappyeyeballs/commit/afcfe5a350acc50a098009617511cd9d21b22f47))
+
 ## v0.5.0 (2023-12-09)
 
 ### Feature
