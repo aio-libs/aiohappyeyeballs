@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.0 (2023-12-09)
+
+### Feature
+
+- Optimize for single case (#5) ([`c7d72f3`](https://github.com/bdraco/aiohappyeyeballs/commit/c7d72f3cdd13149319fc9e4848146d23bddc619b))
+
 ## v0.2.0 (2023-12-09)
 
 ### Feature
