@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for unexpected exception (#16) ([`bad4874`](https://github.com/bdraco/aiohappyeyeballs/commit/bad48745d3621fcbbe559d55180dc5f5856dc0fa))
+
 ## v1.3.0 (2023-12-09)
 
 ### Feature
