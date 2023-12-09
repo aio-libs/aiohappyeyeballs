@@ -60,7 +60,10 @@ async def test_create_connection_single_addr_info_errors(m_socket: ModuleType) -
 @patch_socket
 async def test_create_connection_single_addr_success(m_socket: ModuleType) -> None:
     mock_socket = mock.MagicMock(
-        family=socket.AF_INET, type=socket.SOCK_STREAM, proto=socket.IPPROTO_TCP
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1000),
     )
 
     def _socket(*args, **kw):
