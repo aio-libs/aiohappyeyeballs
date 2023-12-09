@@ -5,14 +5,18 @@ import functools
 import itertools
 import socket
 from asyncio import staggered
-from typing import Optional
+from typing import List, Optional, Tuple, Union
+
+AddrInfoType = Tuple[
+    int, int, int, str, Union[Tuple[str, int], Tuple[str, int, int, int]]
+]
 
 
 async def create_connection(
     loop: asyncio.AbstractEventLoop,
-    addr_infos: list,
+    addr_infos: List[AddrInfoType],
     *,
-    local_addr_infos: Optional[list] = None,
+    local_addr_infos: Optional[List[AddrInfoType]] = None,
     happy_eyeballs_delay: Optional[float] = None,
     interleave: Optional[int] = None,
     all_errors: bool = False,
@@ -36,19 +40,22 @@ async def create_connection(
     if interleave:
         addr_infos = _interleave_addrinfos(addr_infos, interleave)
 
-    exceptions = []
+    sock: Optional[socket.socket] = None
+    exceptions: List[List[Exception]] = []
     if happy_eyeballs_delay is None:
         # not using happy eyeballs
         for addrinfo in addr_infos:
             try:
-                sock = await _connect_sock(exceptions, addrinfo, local_addr_infos)
+                sock = await _connect_sock(loop, exceptions, addrinfo, local_addr_infos)
                 break
             except OSError:
                 continue
     else:  # using happy eyeballs
         sock, _, _ = await staggered.staggered_race(
             (
-                functools.partial(_connect_sock, exceptions, addrinfo, local_addr_infos)
+                functools.partial(
+                    _connect_sock, loop, exceptions, addrinfo, local_addr_infos
+                )
                 for addrinfo in addr_infos
             ),
             happy_eyeballs_delay,
@@ -56,38 +63,39 @@ async def create_connection(
         )
 
     if sock is None:
-        exceptions = [exc for sub in exceptions for exc in sub]
+        all_exceptions = [exc for sub in exceptions for exc in sub]
         try:
             if all_errors:
-                raise ExceptionGroup("create_connection failed", exceptions)
-            if len(exceptions) == 1:
-                raise exceptions[0]
+                raise ExceptionGroup("create_connection failed", all_exceptions)
+            if len(all_exceptions) == 1:
+                raise all_exceptions[0]
             else:
                 # If they all have the same str(), raise one.
-                model = str(exceptions[0])
-                if all(str(exc) == model for exc in exceptions):
-                    raise exceptions[0]
+                model = str(all_exceptions[0])
+                if all(str(exc) == model for exc in all_exceptions):
+                    raise all_exceptions[0]
                 # Raise a combined exception so the user can see all
                 # the various error messages.
                 raise OSError(
                     "Multiple exceptions: {}".format(
-                        ", ".join(str(exc) for exc in exceptions)
+                        ", ".join(str(exc) for exc in all_exceptions)
                     )
                 )
         finally:
-            exceptions = None
+            all_exceptions = None  # type: ignore[assignment]
+            exceptions = None  # type: ignore[assignment]
 
     return sock
 
 
 async def _connect_sock(
     loop: asyncio.AbstractEventLoop,
-    exceptions: list[BaseException],
-    addr_info,
-    local_addr_infos=None,
-):
+    exceptions: List[List[Exception]],
+    addr_info: AddrInfoType,
+    local_addr_infos: Optional[List[AddrInfoType]] = None,
+) -> socket.socket:
     """Create, bind and connect one socket."""
-    my_exceptions = []
+    my_exceptions: list[Exception] = []
     exceptions.append(my_exceptions)
     family, type_, proto, _, address = addr_info
     sock = None
@@ -127,13 +135,17 @@ async def _connect_sock(
             sock.close()
         raise
     finally:
-        exceptions = my_exceptions = None
+        exceptions = my_exceptions = None  # type: ignore[assignment]
 
 
-def _interleave_addrinfos(addrinfos, first_address_family_count=1):
+def _interleave_addrinfos(
+    addrinfos: List[AddrInfoType], first_address_family_count: int = 1
+) -> List[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
-    addrinfos_by_family = collections.OrderedDict()
+    addrinfos_by_family: collections.OrderedDict[
+        int, List[AddrInfoType]
+    ] = collections.OrderedDict()
     for addr in addrinfos:
         family = addr[0]
         if family not in addrinfos_by_family:
@@ -141,7 +153,7 @@ def _interleave_addrinfos(addrinfos, first_address_family_count=1):
         addrinfos_by_family[family].append(addr)
     addrinfos_lists = list(addrinfos_by_family.values())
 
-    reordered = []
+    reordered: List[AddrInfoType] = []
     if first_address_family_count > 1:
         reordered.extend(addrinfos_lists[0][: first_address_family_count - 1])
         del addrinfos_lists[0][: first_address_family_count - 1]
