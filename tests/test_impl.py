@@ -7,8 +7,6 @@ import pytest
 
 from aiohappyeyeballs import create_connection
 
-MOCK_ANY = mock.ANY
-
 
 def mock_socket_module():
     m_socket = mock.MagicMock(spec=socket)
@@ -56,3 +54,16 @@ async def test_create_connection_single_addr_info_errors(m_socket: ModuleType) -
     addr_info = [(2, 1, 6, "", ("107.6.106.82", 80))]
     with pytest.raises(OSError, match=errors[0]):
         await create_connection(addr_info)
+
+
+@pytest.mark.asyncio
+@patch_socket
+async def test_create_connection_single_addr_success(m_socket: ModuleType) -> None:
+    mock_socket = mock.MagicMock()
+
+    def _socket(*args, **kw):
+        return mock_socket
+
+    m_socket.socket = _socket  # type: ignore
+    addr_info = [(2, 1, 6, "", ("107.6.106.82", 80))]
+    assert await create_connection(addr_info) == mock_socket
