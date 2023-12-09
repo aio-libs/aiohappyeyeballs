@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for multiple and same exceptions (#20) ([`2781b87`](https://github.com/bdraco/aiohappyeyeballs/commit/2781b87c56aa1c08345d91dce5c1642f2b3e396d))
+
 ## v1.5.0 (2023-12-09)
 
 ### Feature
