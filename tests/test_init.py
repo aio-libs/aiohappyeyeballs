@@ -1,5 +1,5 @@
-from aiohappyeyeballs import create_connection
+from aiohappyeyeballs import start_connection
 
 
 def test_init():
-    assert create_connection is not None
+    assert start_connection is not None

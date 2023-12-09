@@ -1,5 +1,5 @@
 __version__ = "0.9.0"
 
-from .impl import AddrInfoType, create_connection
+from .impl import AddrInfoType, start_connection
 
-__all__ = ("create_connection", "AddrInfoType")
+__all__ = ("start_connection", "AddrInfoType")
