@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.7.0 (2023-12-09)
+
+### Fix
+
+- License should be psf-2.0 (#22) ([`ca9c1fc`](https://github.com/bdraco/aiohappyeyeballs/commit/ca9c1fca4d63c54855fbe582132b5dcb229c7591))
+
+### Feature
+
+- Add some more examples to the docs (#21) ([`6cd0b5d`](https://github.com/bdraco/aiohappyeyeballs/commit/6cd0b5d10357a9d20fc5ee1c96db18c6994cd8fc))
+
 ## v1.6.0 (2023-12-09)
 
 ### Feature
