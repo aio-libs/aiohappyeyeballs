@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.1 (2023-12-09)
+
+### Fix
+
+- Ensure exception error is stringified (#17) ([`747cf1d`](https://github.com/bdraco/aiohappyeyeballs/commit/747cf1d231dc427b79ff1f8128779413a50be5d8))
+
 ## v1.4.0 (2023-12-09)
 
 ### Feature

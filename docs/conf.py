@@ -7,7 +7,7 @@
 project = "aiohappyeyeballs"
 copyright = "2023, J. Nick Koston"
 author = "J. Nick Koston"
-release = "1.4.0"
+release = "1.4.1"
 
 # General configuration
 extensions = [
