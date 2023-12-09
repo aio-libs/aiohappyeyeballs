@@ -46,6 +46,13 @@ async def start_connection(
     This method is a coroutine which will try to establish the connection
     in the background. When successful, the coroutine returns a
     socket.
+
+    The expected use case is to use this method in conjunction with
+    loop.create_connection() to establish a connection to a server::
+
+            socket = await start_connection(addr_infos)
+            transport, protocol = await loop.create_connection(
+                MyProtocol, sock=socket, ...)
     """
     if not (current_loop := loop):
         current_loop = asyncio.get_running_loop()

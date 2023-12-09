@@ -40,11 +40,34 @@
 
 Happy Eyeballs
 
+## Use case
+
+This library exists to allow connecting with Happy Eyeballs when you
+already have a list of addrinfo and not a DNS name.
+
+The stdlib version of `loop.create_connection()`
+will only work when you pass in an unresolved name which
+is not a good fit when using DNS caching or resolving
+names via another method such was `zeroconf`.
+
 ## Installation
 
 Install this via pip (or your favourite package manager):
 
 `pip install aiohappyeyeballs`
+
+## Example usage
+
+```python
+
+addr_infos = await loop.getaddrinfo("example.org", 80)
+
+socket = await start_connection(addr_infos)
+
+transport, protocol = await loop.create_connection(
+    MyProtocol, sock=socket, ...)
+
+```
 
 ## Credits
 
