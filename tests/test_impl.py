@@ -643,10 +643,9 @@ async def test_start_connection_ipv64_laddr_both__eyeballs_first_ipv6_fails(
             == mock_socket
         )
 
-    # IPv6 addresses are tried first, but the first one fails so second IPv6 wins
-    # because interleave is 2
-    assert mock_socket.family == socket.AF_INET6
-    assert create_calls == [("dead:beef::", 80, 0, 0), ("dead:aaaa::", 80, 0, 0)]
+    # IPv6 is tried first and fails, which means IPv4 is tried next and succeeds
+    assert mock_socket.family == socket.AF_INET
+    assert create_calls == [("dead:beef::", 80, 0, 0), ("107.6.106.83", 80)]
 
 
 @pytest.mark.asyncio
