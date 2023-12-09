@@ -1,3 +1,4 @@
+import asyncio
 import socket
 from test.test_asyncio import utils as test_utils
 from types import ModuleType
@@ -71,4 +72,6 @@ async def test_create_connection_single_addr_success(m_socket: ModuleType) -> No
 
     m_socket.socket = _socket  # type: ignore
     addr_info = [(2, 1, 6, "", ("107.6.106.82", 80))]
-    assert await create_connection(addr_info) == mock_socket
+    loop = asyncio.get_running_loop()
+    with mock.patch.object(loop, "sock_connect", return_value=None):
+        assert await create_connection(addr_info) == mock_socket
