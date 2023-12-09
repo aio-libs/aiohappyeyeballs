@@ -59,7 +59,9 @@ async def test_create_connection_single_addr_info_errors(m_socket: ModuleType) -
 @pytest.mark.asyncio
 @patch_socket
 async def test_create_connection_single_addr_success(m_socket: ModuleType) -> None:
-    mock_socket = mock.MagicMock()
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET, type=socket.SOCK_STREAM, proto=socket.IPPROTO_TCP
+    )
 
     def _socket(*args, **kw):
         return mock_socket
