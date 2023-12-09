@@ -8,7 +8,11 @@ from asyncio import staggered
 from typing import List, Optional, Sequence, Tuple, Union
 
 AddrInfoType = Tuple[
-    int, int, int, str, Union[Tuple[str, int], Tuple[str, int, int, int]]
+    Union[int, socket.AddressFamily],
+    Union[int, socket.SocketKind],
+    int,
+    str,
+    Tuple,  # type: ignore[type-arg]
 ]
 
 
@@ -40,7 +44,7 @@ async def create_connection(
     * ``sockaddr``: the socket address
 
     This method is a coroutine which will try to establish the connection
-    in the background.  When successful, the coroutine returns a
+    in the background. When successful, the coroutine returns a
     socket.
     """
     if not (current_loop := loop):
