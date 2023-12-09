@@ -1,0 +1,20 @@
+# Changes here will be overwritten by Copier
+_commit: b09ed7d
+_src_path: gh:browniebroke/pypackage-template
+add_me_as_contributor: false
+copyright_year: '2023'
+documentation: true
+email: nick@koston.org
+full_name: J. Nick Koston
+github_username: bdraco
+has_cli: false
+initial_commit: true
+open_source_license: Apache Software License 2.0
+package_name: aiohappyeyeballs
+project_name: aiohappyeyeballs
+project_short_description: Happy Eyeballs
+project_slug: aiohappyeyeballs
+run_poetry_install: true
+setup_github: true
+setup_pre_commit: true
+
