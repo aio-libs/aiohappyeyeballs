@@ -8,6 +8,12 @@ Start by importing it:
 
 ```python
 import aiohappyeyeballs
-```
 
-TODO: Document usage
+addr_infos = await loop.getaddrinfo("example.org", 80)
+
+socket = await aiohappyeyeballs.start_connection(addr_infos)
+socket = await aiohappyeyeballs.start_connection(addr_infos, local_addr_infos=local_addr_infos, happy_eyeballs_delay=0.2)
+
+transport, protocol = await loop.create_connection(
+    MyProtocol, sock=socket, ...)
+```
