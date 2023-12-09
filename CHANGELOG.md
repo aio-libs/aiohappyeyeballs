@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.0 (2023-12-09)
+
+### Feature
+
+- Add more tests (#6) ([`4428c07`](https://github.com/bdraco/aiohappyeyeballs/commit/4428c0714e3e100605f940eb6adee2e86788b4db))
+
 ## v0.3.0 (2023-12-09)
 
 ### Feature
