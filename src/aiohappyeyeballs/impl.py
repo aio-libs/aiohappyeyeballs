@@ -5,7 +5,7 @@ import functools
 import itertools
 import socket
 from asyncio import staggered
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Sequence, Tuple, Union
 
 AddrInfoType = Tuple[
     int, int, int, str, Union[Tuple[str, int], Tuple[str, int, int, int]]
@@ -13,9 +13,9 @@ AddrInfoType = Tuple[
 
 
 async def create_connection(
-    addr_infos: List[AddrInfoType],
+    addr_infos: Sequence[AddrInfoType],
     *,
-    local_addr_infos: Optional[List[AddrInfoType]] = None,
+    local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
     happy_eyeballs_delay: Optional[float] = None,
     interleave: Optional[int] = None,
     all_errors: bool = False,
@@ -97,7 +97,7 @@ async def _connect_sock(
     loop: asyncio.AbstractEventLoop,
     exceptions: List[List[Exception]],
     addr_info: AddrInfoType,
-    local_addr_infos: Optional[List[AddrInfoType]] = None,
+    local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
 ) -> socket.socket:
     """Create, bind and connect one socket."""
     my_exceptions: list[Exception] = []
@@ -144,7 +144,7 @@ async def _connect_sock(
 
 
 def _interleave_addrinfos(
-    addrinfos: List[AddrInfoType], first_address_family_count: int = 1
+    addrinfos: Sequence[AddrInfoType], first_address_family_count: int = 1
 ) -> List[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
