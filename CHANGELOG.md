@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for bind failure with local addresses (#15) ([`f71ec23`](https://github.com/bdraco/aiohappyeyeballs/commit/f71ec23228d4dad4bc2c3a6630e6e4361b54df44))
+
 ## v1.2.0 (2023-12-09)
 
 ### Feature
