@@ -50,7 +50,7 @@ async def test__single_addr_info_errors(m_socket: ModuleType) -> None:
     def _socket(*args, **kw):
         nonlocal idx, errors
         idx += 1
-        raise OSError(errors[idx])
+        raise OSError(5, errors[idx])
 
     m_socket.socket = _socket  # type: ignore
     addr_info = [
@@ -112,7 +112,7 @@ async def test__multiple_addr_success_second_one(
         nonlocal idx, errors
         idx += 1
         if idx == 1:
-            raise OSError(errors[idx])
+            raise OSError(5, errors[idx])
         return mock_socket
 
     m_socket.socket = _socket  # type: ignore
@@ -155,7 +155,7 @@ async def test__multiple_addr_success_second_one_happy_eyeballs(
         nonlocal idx, errors
         idx += 1
         if idx == 1:
-            raise OSError(errors[idx])
+            raise OSError(5, errors[idx])
         return mock_socket
 
     m_socket.socket = _socket  # type: ignore
@@ -199,7 +199,7 @@ async def test__multiple_addr_all_fail_happy_eyeballs(
     def _socket(*args, **kw):
         nonlocal idx, errors
         idx += 1
-        raise OSError(errors[idx])
+        raise OSError(5, errors[idx])
 
     m_socket.socket = _socket  # type: ignore
     addr_info = [
@@ -237,7 +237,7 @@ async def test__ipv6_and_ipv4_happy_eyeballs_ipv6_fails(
 
     def _socket(*args, **kw):
         if kw["family"] == socket.AF_INET6:
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
         for attr in kw:
             setattr(mock_socket, attr, kw[attr])
         return mock_socket
@@ -280,7 +280,7 @@ async def test__ipv6_and_ipv4_happy_eyeballs_ipv4_fails(
 
     def _socket(*args, **kw):
         if kw["family"] == socket.AF_INET:
-            raise OSError("ipv4 fail")
+            raise OSError(5, "ipv4 fail")
         for attr in kw:
             setattr(mock_socket, attr, kw[attr])
         return mock_socket
@@ -334,7 +334,7 @@ async def test__ipv6_and_ipv4_happy_eyeballs_first_ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -395,7 +395,7 @@ async def test__ipv64_happy_eyeballs_interleave_2_first_ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -458,7 +458,7 @@ async def test__ipv6_only_happy_eyeballs_first_ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -512,7 +512,7 @@ async def test__ipv64_laddr_eyeballs_interleave_2_first_ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -589,7 +589,7 @@ async def test__ipv64_laddr_both__eyeballs_first_ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -665,7 +665,7 @@ async def test__ipv64_laddr_bind_fails_eyeballs_first_ipv6_fails(
         for attr in kw:
             setattr(mock_socket, attr, kw[attr])
         if kw["family"] == socket.AF_INET:
-            mock_socket.bind.side_effect = OSError("bind fail")
+            mock_socket.bind.side_effect = OSError(5, "bind fail")
 
         return mock_socket
 
@@ -674,7 +674,7 @@ async def test__ipv64_laddr_bind_fails_eyeballs_first_ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -752,7 +752,7 @@ async def test_ipv64_laddr_bind_fails_eyeballs_interleave_first__ipv6_fails(
         for attr in kw:
             setattr(mock_socket, attr, kw[attr])
         if kw["family"] == socket.AF_INET:
-            mock_socket.bind.side_effect = OSError("bind fail")
+            mock_socket.bind.side_effect = OSError(5, "bind fail")
 
         return mock_socket
 
@@ -761,7 +761,7 @@ async def test_ipv64_laddr_bind_fails_eyeballs_interleave_first__ipv6_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -843,7 +843,7 @@ async def test_ipv64_laddr_socket_fails(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
@@ -925,7 +925,7 @@ async def test_ipv64_laddr_eyeballs_ipv4_only_tried(
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
-            raise OSError("ipv6 fail")
+            raise OSError(5, "ipv6 fail")
 
         return None
 
