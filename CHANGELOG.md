@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for interleave (#11) ([`62817f1`](https://github.com/bdraco/aiohappyeyeballs/commit/62817f1473bb5702f8fa9edc6f6b24139990cd01))
+
 ## v0.8.0 (2023-12-09)
 
 ### Feature
