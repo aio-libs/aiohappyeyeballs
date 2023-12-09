@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.8.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for multi ipv6 (#10) ([`6dc8f89`](https://github.com/bdraco/aiohappyeyeballs/commit/6dc8f89ff99a38c8ecaf8045c9afbe683d6f2c6e))
+
 ## v0.7.0 (2023-12-09)
 
 ### Feature
