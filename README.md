@@ -63,6 +63,7 @@ Install this via pip (or your favourite package manager):
 addr_infos = await loop.getaddrinfo("example.org", 80)
 
 socket = await start_connection(addr_infos)
+socket = await start_connection(addr_infos, local_addr_infos=local_addr_infos, happy_eyeballs_delay=0.2)
 
 transport, protocol = await loop.create_connection(
     MyProtocol, sock=socket, ...)
