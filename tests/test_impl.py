@@ -487,3 +487,156 @@ async def test_start_connection_ipv6_only_happy_eyeballs_first_ipv6_fails(
     # IPv6 address are tried first, but the first one fails so second IPv6 wins
     assert mock_socket.family == socket.AF_INET6
     assert create_calls == [("dead:beef::", 80, 0, 0), ("dead:aaaa::", 80, 0, 0)]
+
+
+@pytest.mark.asyncio
+@patch_socket
+async def test_start_connection_ipv64_laddr_eyeballs_interleave_2_first_ipv6_fails(
+    m_socket: ModuleType,
+) -> None:
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1),
+    )
+    create_calls = []
+
+    def _socket(*args, **kw):
+        for attr in kw:
+            setattr(mock_socket, attr, kw[attr])
+        return mock_socket
+
+    async def _sock_connect(
+        sock: socket.socket, address: Tuple[str, int, int, int]
+    ) -> None:
+        create_calls.append(address)
+        if address[0] == "dead:beef::":
+            raise OSError("ipv6 fail")
+
+        return None
+
+    m_socket.socket = _socket  # type: ignore
+    ipv6_addr_info = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::", 80, 0, 0),
+    )
+    ipv6_addr_info_2 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:aaaa::", 80, 0, 0),
+    )
+    ipv4_addr_info = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.83", 80),
+    )
+    addr_info = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
+    local_addr_infos = [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("::1", 0, 0, 0),
+        )
+    ]
+    loop = asyncio.get_running_loop()
+    with mock.patch.object(loop, "sock_connect", _sock_connect):
+        assert (
+            await start_connection(
+                addr_info,
+                happy_eyeballs_delay=0.3,
+                interleave=2,
+                local_addr_infos=local_addr_infos,
+            )
+            == mock_socket
+        )
+
+    # IPv6 addresses are tried first, but the first one fails so second IPv6 wins
+    # because interleave is 2
+    assert mock_socket.family == socket.AF_INET6
+    assert create_calls == [("dead:beef::", 80, 0, 0), ("dead:aaaa::", 80, 0, 0)]
+
+
+@pytest.mark.asyncio
+@patch_socket
+async def test_start_connection_ipv64_laddr_eyeballs_ipv4_only_tried(
+    m_socket: ModuleType,
+) -> None:
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1),
+    )
+    create_calls = []
+
+    def _socket(*args, **kw):
+        for attr in kw:
+            setattr(mock_socket, attr, kw[attr])
+        return mock_socket
+
+    async def _sock_connect(
+        sock: socket.socket, address: Tuple[str, int, int, int]
+    ) -> None:
+        create_calls.append(address)
+        if address[0] == "dead:beef::":
+            raise OSError("ipv6 fail")
+
+        return None
+
+    m_socket.socket = _socket  # type: ignore
+    ipv6_addr_info = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::", 80, 0, 0),
+    )
+    ipv6_addr_info_2 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:aaaa::", 80, 0, 0),
+    )
+    ipv4_addr_info = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.83", 80),
+    )
+    addr_info = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
+    local_addr_infos = [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("127.0.0.1", 0),
+        )
+    ]
+    loop = asyncio.get_running_loop()
+    with mock.patch.object(loop, "sock_connect", _sock_connect):
+        assert (
+            await start_connection(
+                addr_info,
+                happy_eyeballs_delay=0.3,
+                interleave=2,
+                local_addr_infos=local_addr_infos,
+            )
+            == mock_socket
+        )
+
+    # Only IPv4 addresses are tried because local_addr_infos is IPv4
+    assert mock_socket.family == socket.AF_INET
+    assert create_calls == [("107.6.106.83", 80)]
