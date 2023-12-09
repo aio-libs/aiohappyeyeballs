@@ -13,13 +13,13 @@ AddrInfoType = Tuple[
 
 
 async def create_connection(
-    loop: asyncio.AbstractEventLoop,
     addr_infos: List[AddrInfoType],
     *,
     local_addr_infos: Optional[List[AddrInfoType]] = None,
     happy_eyeballs_delay: Optional[float] = None,
     interleave: Optional[int] = None,
     all_errors: bool = False,
+    loop: Optional[asyncio.AbstractEventLoop] = None,
 ) -> socket.socket:
     """
     Connect to a TCP server.
@@ -33,6 +33,9 @@ async def create_connection(
     in the background.  When successful, the coroutine returns a
     (transport, protocol) pair.
     """
+    if not (current_loop := loop):
+        current_loop = asyncio.get_running_loop()
+
     if happy_eyeballs_delay is not None and interleave is None:
         # If using happy eyeballs, default to interleave addresses by family
         interleave = 1
@@ -46,7 +49,9 @@ async def create_connection(
         # not using happy eyeballs
         for addrinfo in addr_infos:
             try:
-                sock = await _connect_sock(loop, exceptions, addrinfo, local_addr_infos)
+                sock = await _connect_sock(
+                    current_loop, exceptions, addrinfo, local_addr_infos
+                )
                 break
             except OSError:
                 continue
@@ -54,12 +59,12 @@ async def create_connection(
         sock, _, _ = await staggered.staggered_race(
             (
                 functools.partial(
-                    _connect_sock, loop, exceptions, addrinfo, local_addr_infos
+                    _connect_sock, current_loop, exceptions, addrinfo, local_addr_infos
                 )
                 for addrinfo in addr_infos
             ),
             happy_eyeballs_delay,
-            loop=loop,
+            loop=current_loop,
         )
 
     if sock is None:
