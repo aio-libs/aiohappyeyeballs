@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for passing local addresses (#14) ([`72a92e3`](https://github.com/bdraco/aiohappyeyeballs/commit/72a92e3a599cde082856354e806a793f2b9eff62))
+
 ## v1.1.0 (2023-12-09)
 
 ### Feature
