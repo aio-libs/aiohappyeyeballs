@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.0 (2023-12-09)
+
+### Feature
+
+- Add coverage for setblocking failing (#19) ([`f759a08`](https://github.com/bdraco/aiohappyeyeballs/commit/f759a08180f0237cb68d353090f7ba0efe625074))
+- Add cover for passing the loop (#18) ([`2d26911`](https://github.com/bdraco/aiohappyeyeballs/commit/2d26911e9237691c168a705b2d6be2a68fa8b7ac))
+
 ## v1.4.1 (2023-12-09)
 
 ### Fix
