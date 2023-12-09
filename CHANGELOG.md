@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.0 (2023-12-09)
+
+### Feature
+
+- Add example usage (#13) ([`707fddc`](https://github.com/bdraco/aiohappyeyeballs/commit/707fddcd8e8aff27af2180af6271898003ca1782))
+
 ## v1.0.0 (2023-12-09)
 
 ### Breaking
