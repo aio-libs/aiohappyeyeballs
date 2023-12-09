@@ -45,7 +45,7 @@ async def create_connection(
 
     sock: Optional[socket.socket] = None
     exceptions: List[List[Exception]] = []
-    if happy_eyeballs_delay is None:
+    if happy_eyeballs_delay is None or len(addr_infos) == 1:
         # not using happy eyeballs
         for addrinfo in addr_infos:
             try:
