@@ -9,7 +9,7 @@ full_name: J. Nick Koston
 github_username: bdraco
 has_cli: false
 initial_commit: true
-open_source_license: Apache Software License 2.0
+open_source_license: PSF-2.0
 package_name: aiohappyeyeballs
 project_name: aiohappyeyeballs
 project_short_description: Happy Eyeballs
