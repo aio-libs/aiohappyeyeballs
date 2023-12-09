@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0 (2023-12-09)
+
+### Breaking
+
+- Rename create_connection to start_connection (#12) ([`f8b6038`](https://github.com/bdraco/aiohappyeyeballs/commit/f8b60383d9b9f013baf421ad4e4e183559b7a705))
+
 ## v0.9.0 (2023-12-09)
 
 ### Feature
