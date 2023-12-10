@@ -39,7 +39,12 @@ def remove_addr_infos(
     addr_infos: List[AddrInfoType],
     addr: Union[Tuple[str, int], Tuple[str, int, int, int]],
 ) -> None:
-    """Remove an address from the list of addr_infos."""
+    """
+    Remove an address from the list of addr_infos.
+
+    The addr value is typically the return value of
+    sock.getpeername().
+    """
     bad_addrs_infos: List[AddrInfoType] = []
     for addr_info in addr_infos:
         if addr_info[-1] == addr:
