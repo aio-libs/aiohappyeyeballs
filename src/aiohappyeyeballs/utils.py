@@ -28,19 +28,19 @@ def pop_addr_infos_interleave(addr_infos: List[AddrInfoType], interleave: int) -
 
 def remove_addr_infos(
     addr_infos: List[AddrInfoType],
-    addr: str,
+    address: str,
 ) -> None:
-    """Pop addr_info from the list of addr_infos by addr."""
+    """Remove an address from the list of addr_infos."""
     bad_addrs_infos: List[AddrInfoType] = []
     for addr_info in addr_infos:
-        if addr_info[-1][0] == addr:
+        if addr_info[-1][0] == address:
             bad_addrs_infos.append(addr_info)
     if bad_addrs_infos:
         for bad_addr_info in bad_addrs_infos:
             addr_infos.remove(bad_addr_info)
         return
     # Slow path in case addr is formatted differently
-    ip_address = ipaddress.ip_address(addr)
+    ip_address = ipaddress.ip_address(address)
     for addr_info in addr_infos:
         if ip_address == ipaddress.ip_address(addr_info[-1][0]):
             bad_addrs_infos.append(addr_info)
@@ -48,4 +48,4 @@ def remove_addr_infos(
         for bad_addr_info in bad_addrs_infos:
             addr_infos.remove(bad_addr_info)
         return
-    raise ValueError(f"Address {addr} not found in addr_infos")
+    raise ValueError(f"Address {address} not found in addr_infos")
