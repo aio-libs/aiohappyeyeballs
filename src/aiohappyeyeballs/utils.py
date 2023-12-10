@@ -1,7 +1,7 @@
 """Utility functions for aiohappyeyeballs."""
 
 import ipaddress
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 
 from .types import AddrInfoType
 
@@ -26,26 +26,35 @@ def pop_addr_infos_interleave(addr_infos: List[AddrInfoType], interleave: int) -
         addr_infos.remove(addr_info)
 
 
+def _addr_tuple_to_ip_address(
+    addr: Union[Tuple[str, int], Tuple[str, int, int, int]]
+) -> Union[
+    Tuple[ipaddress.IPv4Address, int], Tuple[ipaddress.IPv6Address, int, int, int]
+]:
+    """Convert an address tuple to an IPv4Address."""
+    return (ipaddress.ip_address(addr[0]), *addr[1:])
+
+
 def remove_addr_infos(
     addr_infos: List[AddrInfoType],
-    address: str,
+    addr: Union[Tuple[str, int], Tuple[str, int, int, int]],
 ) -> None:
     """Remove an address from the list of addr_infos."""
     bad_addrs_infos: List[AddrInfoType] = []
     for addr_info in addr_infos:
-        if addr_info[-1][0] == address:
+        if addr_info[-1] == addr:
             bad_addrs_infos.append(addr_info)
     if bad_addrs_infos:
         for bad_addr_info in bad_addrs_infos:
             addr_infos.remove(bad_addr_info)
         return
     # Slow path in case addr is formatted differently
-    ip_address = ipaddress.ip_address(address)
+    match_addr = _addr_tuple_to_ip_address(addr)
     for addr_info in addr_infos:
-        if ip_address == ipaddress.ip_address(addr_info[-1][0]):
+        if match_addr == _addr_tuple_to_ip_address(addr_info[-1]):
             bad_addrs_infos.append(addr_info)
     if bad_addrs_infos:
         for bad_addr_info in bad_addrs_infos:
             addr_infos.remove(bad_addr_info)
         return
-    raise ValueError(f"Address {address} not found in addr_infos")
+    raise ValueError(f"Address {addr} not found in addr_infos")

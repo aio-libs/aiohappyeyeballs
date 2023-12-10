@@ -65,11 +65,14 @@ def test_remove_addr_infos():
     )
     addr_info: List[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
     addr_info_copy = addr_info.copy()
-    remove_addr_infos(addr_info_copy, "dead:beef::")
+    remove_addr_infos(
+        addr_info_copy,
+        ("dead:beef::", 80, 0, 0),
+    )
     assert addr_info_copy == [ipv6_addr_info_2, ipv4_addr_info]
-    remove_addr_infos(addr_info_copy, "dead:aaaa::")
+    remove_addr_infos(addr_info_copy, ("dead:aaaa::", 80, 0, 0))
     assert addr_info_copy == [ipv4_addr_info]
-    remove_addr_infos(addr_info_copy, "107.6.106.83")
+    remove_addr_infos(addr_info_copy, ("107.6.106.83", 80))
     assert addr_info_copy == []
 
 
@@ -98,10 +101,16 @@ def test_remove_addr_infos_slow_path():
     )
     addr_info: List[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
     addr_info_copy = addr_info.copy()
-    remove_addr_infos(addr_info_copy, "dead:beef:0000:0000:0000:0000:0000:0000")
+    remove_addr_infos(
+        addr_info_copy, ("dead:beef:0000:0000:0000:0000:0000:0000", 80, 0, 0)
+    )
     assert addr_info_copy == [ipv6_addr_info_2, ipv4_addr_info]
-    remove_addr_infos(addr_info_copy, "dead:aaaa:0000:0000:0000:0000:0000:0000")
+    remove_addr_infos(
+        addr_info_copy, ("dead:aaaa:0000:0000:0000:0000:0000:0000", 80, 0, 0)
+    )
     assert addr_info_copy == [ipv4_addr_info]
-    with pytest.raises(ValueError, match="Address 107.6.106.2 not found in addr_infos"):
-        remove_addr_infos(addr_info_copy, "107.6.106.2")
+    with pytest.raises(
+        ValueError, match=r"Address \('107.6.106.2', 80\) not found in addr_infos"
+    ):
+        remove_addr_infos(addr_info_copy, ("107.6.106.2", 80))
     assert addr_info_copy == [ipv4_addr_info]
