@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.1 (2023-12-10)
+
+### Fix
+
+- Move types into a single file (#24) ([`8d4cfee`](https://github.com/bdraco/aiohappyeyeballs/commit/8d4cfeeaa7862e028e941c49f8c84dcee0b9b1ac))
+
 ## v1.8.0 (2023-12-10)
 
 ### Feature
