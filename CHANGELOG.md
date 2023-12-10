@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.0 (2023-12-10)
+
+### Feature
+
+- Add utils (#23) ([`d89311d`](https://github.com/bdraco/aiohappyeyeballs/commit/d89311d1a433dde75863019a08717a531f68befa))
+
 ## v1.7.0 (2023-12-09)
 
 ### Fix
