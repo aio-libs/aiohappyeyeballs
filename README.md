@@ -68,6 +68,12 @@ socket = await start_connection(addr_infos, local_addr_infos=local_addr_infos, h
 transport, protocol = await loop.create_connection(
     MyProtocol, sock=socket, ...)
 
+# Remove the first address for each family from addr_info
+pop_addr_infos_interleave(addr_info, 1)
+
+# Remove all matching address from addr_info
+remove_addr_infos(addr_info, "dead::beef::")
+
 ```
 
 ## Credits

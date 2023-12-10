@@ -16,4 +16,10 @@ socket = await aiohappyeyeballs.start_connection(addr_infos, local_addr_infos=lo
 
 transport, protocol = await loop.create_connection(
     MyProtocol, sock=socket, ...)
+
+# Remove the first address for each family from addr_info
+aiohappyeyeballs.pop_addr_infos_interleave(addr_info, 1)
+
+# Remove all matching address from addr_info
+aiohappyeyeballs.remove_addr_infos(addr_info, "dead::beef::")
 ```
