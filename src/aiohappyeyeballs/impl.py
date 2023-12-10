@@ -5,15 +5,9 @@ import functools
 import itertools
 import socket
 from asyncio import staggered
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import List, Optional, Sequence
 
-AddrInfoType = Tuple[
-    Union[int, socket.AddressFamily],
-    Union[int, socket.SocketKind],
-    int,
-    str,
-    Tuple,  # type: ignore[type-arg]
-]
+from .types import AddrInfoType
 
 
 async def start_connection(
