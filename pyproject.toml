@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiohappyeyeballs"
-version = "1.8.1"
+version = "2.0.0"
 description = "Happy Eyeballs"
 authors = ["J. Nick Koston <nick@koston.org>"]
 license = "PSF-2.0"

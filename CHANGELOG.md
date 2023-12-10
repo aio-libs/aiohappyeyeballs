@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.0 (2023-12-10)
+
+### Breaking
+
+- Require the full address tuple for the remove_addr_infos util (#26) ([`d7e5df1`](https://github.com/bdraco/aiohappyeyeballs/commit/d7e5df12a01838e81729af4c49938e98b3407e03))
+
 ## v1.8.1 (2023-12-10)
 
 ### Fix
