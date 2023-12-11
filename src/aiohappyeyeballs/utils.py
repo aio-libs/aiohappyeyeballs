@@ -35,7 +35,7 @@ def addr_to_addr_infos(
 
 
 def pop_addr_infos_interleave(
-    addr_infos: List[AddrInfoType], interleave: Optional[int] = 1
+    addr_infos: List[AddrInfoType], interleave: Optional[int] = None
 ) -> None:
     """
     Pop addr_info from the list of addr_infos by family up to interleave times.
