@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.0 (2023-12-11)
+
+### Feature
+
+- Make interleave with pop_addr_infos_interleave optional to match cpython (#28) ([`adbc8ad`](https://github.com/bdraco/aiohappyeyeballs/commit/adbc8adfaa44349ca83966787400413668f0b4b6))
+
 ## v2.1.0 (2023-12-11)
 
 ### Feature
