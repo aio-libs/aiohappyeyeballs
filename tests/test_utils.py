@@ -43,6 +43,9 @@ def test_pop_addr_infos_interleave():
     addr_info_copy = addr_info.copy()
     pop_addr_infos_interleave(addr_info_copy, 2)
     assert addr_info_copy == []
+    addr_info_copy = addr_info.copy()
+    pop_addr_infos_interleave(addr_info_copy)
+    assert addr_info_copy == [ipv6_addr_info_2]
 
 
 def test_remove_addr_infos():

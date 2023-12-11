@@ -34,7 +34,9 @@ def addr_to_addr_infos(
     return [(family, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", addr)]
 
 
-def pop_addr_infos_interleave(addr_infos: List[AddrInfoType], interleave: int) -> None:
+def pop_addr_infos_interleave(
+    addr_infos: List[AddrInfoType], interleave: Optional[int] = None
+) -> None:
     """
     Pop addr_info from the list of addr_infos by family up to interleave times.
 
@@ -42,6 +44,8 @@ def pop_addr_infos_interleave(addr_infos: List[AddrInfoType], interleave: int) -
     each family should be popped of the top of the list.
     """
     seen: Dict[int, int] = {}
+    if interleave is None:
+        interleave = 1
     to_remove: List[AddrInfoType] = []
     for addr_info in addr_infos:
         family = addr_info[0]
