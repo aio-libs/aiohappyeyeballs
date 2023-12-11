@@ -22,4 +22,7 @@ aiohappyeyeballs.pop_addr_infos_interleave(addr_info, 1)
 
 # Remove all matching address from addr_info
 aiohappyeyeballs.remove_addr_infos(addr_info, "dead::beef::")
+
+# Convert a local_addr to local_addr_infos
+local_addr_infos = addr_to_addr_infos(("127.0.0.1",0))
 ```
