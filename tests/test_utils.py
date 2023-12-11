@@ -3,7 +3,12 @@ from typing import List
 
 import pytest
 
-from aiohappyeyeballs import AddrInfoType, pop_addr_infos_interleave, remove_addr_infos
+from aiohappyeyeballs import (
+    AddrInfoType,
+    addr_to_addr_infos,
+    pop_addr_infos_interleave,
+    remove_addr_infos,
+)
 
 
 def test_pop_addr_infos_interleave():
@@ -114,3 +119,64 @@ def test_remove_addr_infos_slow_path():
     ):
         remove_addr_infos(addr_info_copy, ("107.6.106.2", 80))
     assert addr_info_copy == [ipv4_addr_info]
+
+
+def test_addr_to_addr_infos():
+    """Test addr_to_addr_infos."""
+    assert addr_to_addr_infos(("1.2.3.4", 43)) == [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("1.2.3.4", 43),
+        )
+    ]
+    assert addr_to_addr_infos(
+        ("dead:aaaa:0000:0000:0000:0000:0000:0000", 80, 0, 0)
+    ) == [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("dead:aaaa:0000:0000:0000:0000:0000:0000", 80, 0, 0),
+        )
+    ]
+    assert addr_to_addr_infos(("dead:aaaa::", 80, 0, 0)) == [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("dead:aaaa::", 80, 0, 0),
+        )
+    ]
+    assert addr_to_addr_infos(("dead:aaaa::", 80)) == [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("dead:aaaa::", 80, 0, 0),
+        )
+    ]
+    assert addr_to_addr_infos(("dead:aaaa::", 80, 1)) == [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("dead:aaaa::", 80, 1, 0),
+        )
+    ]
+    assert addr_to_addr_infos(("dead:aaaa::", 80, 1, 1)) == [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("dead:aaaa::", 80, 1, 1),
+        )
+    ]
+    assert addr_to_addr_infos(None) is None
