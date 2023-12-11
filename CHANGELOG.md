@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.0 (2023-12-11)
+
+### Feature
+
+- Add addr_to_addr_info util for converting addr to addr_infos (#27) ([`2e25a98`](https://github.com/bdraco/aiohappyeyeballs/commit/2e25a98f2339d84bc7951ad17f0b38c104a97a71))
+
 ## v2.0.0 (2023-12-10)
 
 ### Breaking
