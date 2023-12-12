@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.0 (2023-12-12)
+
+### Feature
+
+- Avoid _interleave_addrinfos when there is only a single addr_info (#29) ([`305f6f1`](https://github.com/bdraco/aiohappyeyeballs/commit/305f6f13d028ab3ead7923870601175102c5970c))
+
 ## v2.2.0 (2023-12-11)
 
 ### Feature
