@@ -51,16 +51,18 @@ async def start_connection(
     if not (current_loop := loop):
         current_loop = asyncio.get_running_loop()
 
+    single_addr_info = len(addr_infos) == 1
+
     if happy_eyeballs_delay is not None and interleave is None:
         # If using happy eyeballs, default to interleave addresses by family
         interleave = 1
 
-    if interleave:
+    if interleave and not single_addr_info:
         addr_infos = _interleave_addrinfos(addr_infos, interleave)
 
     sock: Optional[socket.socket] = None
     exceptions: List[List[Exception]] = []
-    if happy_eyeballs_delay is None or len(addr_infos) == 1:
+    if happy_eyeballs_delay is None or single_addr_info:
         # not using happy eyeballs
         for addrinfo in addr_infos:
             try:
