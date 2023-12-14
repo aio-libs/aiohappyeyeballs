@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.1 (2023-12-14)
+
+### Fix
+
+- Remove test import from tests (#31) ([`c529b15`](https://github.com/bdraco/aiohappyeyeballs/commit/c529b15fbead0aa5cde9dd5c460ff5abd15fc355))
+
 ## v2.3.0 (2023-12-12)
 
 ### Feature
