@@ -1,6 +1,5 @@
 import asyncio
 import socket
-from test.test_asyncio import utils as test_utils
 from types import ModuleType
 from typing import Tuple
 from unittest import mock
@@ -30,9 +29,21 @@ def mock_socket_module():
             delattr(m_socket, name)
 
     m_socket.socket = mock.MagicMock()
-    m_socket.socket.return_value = test_utils.mock_nonblocking_socket()
+    m_socket.socket.return_value = mock_nonblocking_socket()
 
     return m_socket
+
+
+def mock_nonblocking_socket(
+    proto=socket.IPPROTO_TCP, type=socket.SOCK_STREAM, family=socket.AF_INET
+):
+    """Create a mock of a non-blocking socket."""
+    sock = mock.create_autospec(socket.socket, spec_set=True, instance=True)
+    sock.proto = proto
+    sock.type = type
+    sock.family = family
+    sock.gettimeout.return_value = 0.0
+    return sock
 
 
 def patch_socket(f):
