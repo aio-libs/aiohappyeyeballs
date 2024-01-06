@@ -87,13 +87,26 @@ jobs:
         with:
           root_options: --noop
 
-  release:
+  check_if_should_release:
+    # This is a dummy step to avoid starting the release step which will
+    # trigger a notification when the pypi env needs to be used and we
+    # don't want to do that unless we're actually releasing.
     needs:
       - test
       - lint
       - commitlint
 
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'main' && !startsWith(github.event.pull_request.title,'chore:')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy
+        run: |
+          echo "GitHub requires the step do something, so we're just going to echo something here."
+
+  release:
+    needs:
+      - check_if_should_release
+
     runs-on: ubuntu-latest
     environment: pypi
     concurrency: release
