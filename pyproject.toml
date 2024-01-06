@@ -5,7 +5,7 @@ description = "Happy Eyeballs"
 authors = ["J. Nick Koston <nick@koston.org>"]
 license = "PSF-2.0"
 readme = "README.md"
-repository = "https://github.com/bdraco/aiohappyeyeballs"
+repository = "https://github.com/aio-libs/aiohappyeyeballs"
 documentation = "https://aiohappyeyeballs.readthedocs.io"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -19,8 +19,8 @@ packages = [
 ]
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/bdraco/aiohappyeyeballs/issues"
-"Changelog" = "https://github.com/bdraco/aiohappyeyeballs/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/aio-libs/aiohappyeyeballs/issues"
+"Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
