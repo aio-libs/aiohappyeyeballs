@@ -1,14 +1,14 @@
 # aiohappyeyeballs
 
 <p align="center">
-  <a href="https://github.com/bdraco/aiohappyeyeballs/actions/workflows/ci.yml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/actions/workflow/status/bdraco/aiohappyeyeballs/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
+  <a href="https://github.com/aio-libs/aiohappyeyeballs/actions/workflows/ci.yml?query=branch%3Amain">
+    <img src="https://img.shields.io/github/actions/workflow/status/aio-libs/aiohappyeyeballs/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
   </a>
   <a href="https://aiohappyeyeballs.readthedocs.io">
     <img src="https://img.shields.io/readthedocs/aiohappyeyeballs.svg?logo=read-the-docs&logoColor=fff&style=flat-square" alt="Documentation Status">
   </a>
-  <a href="https://codecov.io/gh/bdraco/aiohappyeyeballs">
-    <img src="https://img.shields.io/codecov/c/github/bdraco/aiohappyeyeballs.svg?logo=codecov&logoColor=fff&style=flat-square" alt="Test coverage percentage">
+  <a href="https://codecov.io/gh/aio-libs/aiohappyeyeballs">
+    <img src="https://img.shields.io/codecov/c/github/aio-libs/aiohappyeyeballs.svg?logo=codecov&logoColor=fff&style=flat-square" alt="Test coverage percentage">
   </a>
 </p>
 <p align="center">
@@ -34,7 +34,7 @@
 
 **Documentation**: <a href="https://aiohappyeyeballs.readthedocs.io" target="_blank">https://aiohappyeyeballs.readthedocs.io </a>
 
-**Source Code**: <a href="https://github.com/bdraco/aiohappyeyeballs" target="_blank">https://github.com/bdraco/aiohappyeyeballs </a>
+**Source Code**: <a href="https://github.com/aio-libs/aiohappyeyeballs" target="_blank">https://github.com/aio-libs/aiohappyeyeballs </a>
 
 ---
 
