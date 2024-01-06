@@ -96,7 +96,7 @@ jobs:
       - lint
       - commitlint
 
-    if: "github.ref_name == 'main' && ${{ github.event.pull_request.title }} != 'chore: *'"
+    if: github.ref_name == 'main' && !startsWith(github.event.pull_request.title,'chore:')
     runs-on: ubuntu-latest
     steps:
       - name: Dummy
