@@ -98,6 +98,10 @@ jobs:
 
     if: "github.ref_name == 'main' && ${{ github.event.pull_request.title }} != 'chore: *'"
     runs-on: ubuntu-latest
+    steps:
+      - name: Dummy
+        run: |
+          echo "GitHub requires the step do something, so we're just going to echo something here."
 
   release:
     needs:
