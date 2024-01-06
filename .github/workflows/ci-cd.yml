@@ -93,7 +93,7 @@ jobs:
       - lint
       - commitlint
 
-    if: github.ref_name == 'main'
+    if: "github.ref_name == 'main' && ${{ github.event.pull_request.title }} != 'chore: *'"
     runs-on: ubuntu-latest
     environment: pypi
     concurrency: release
