@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.2 (2024-01-06)
+
+### Fix
+
+- Update urls for the new home for this library (#43) ([`c6d4358`](https://github.com/aio-libs/aiohappyeyeballs/commit/c6d43586d5ca56472892767d4a47d28348158544))
+
 ## v2.3.1 (2023-12-14)
 
 ### Fix
