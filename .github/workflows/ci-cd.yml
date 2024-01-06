@@ -71,7 +71,7 @@ jobs:
       - commitlint
 
     runs-on: ubuntu-latest
-    environment: release
+    environment: pypi
     concurrency: release
     permissions:
       id-token: write
