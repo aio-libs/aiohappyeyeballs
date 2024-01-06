@@ -64,18 +64,15 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  release:
+  test_release:
     needs:
       - test
       - lint
       - commitlint
 
     runs-on: ubuntu-latest
-    environment: release
+    environment: test_release
     concurrency: release
-    permissions:
-      id-token: write
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -90,11 +87,30 @@ jobs:
         with:
           root_options: --noop
 
+  release:
+    needs:
+      - test
+      - lint
+      - commitlint
+
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    environment: pypi
+    concurrency: release
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
+
       # On main branch: actual PSR + upload to PyPI & GitHub
       - name: Release
         uses: python-semantic-release/python-semantic-release@v8.5.0
         id: release
-        if: github.ref_name == 'main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
