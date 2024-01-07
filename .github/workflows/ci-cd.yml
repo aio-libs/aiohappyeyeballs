@@ -103,16 +103,13 @@ jobs:
         run: |
           echo "GitHub requires the step do something, so we're just going to echo something here."
 
-  release:
+  build_release:
     needs:
       - check_if_should_release
 
     runs-on: ubuntu-latest
-    environment: pypi
+    environment: build_release
     concurrency: release
-    permissions:
-      id-token: write
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -127,12 +124,36 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  release:
+    needs:
+      - build_release
+
+    runs-on: ubuntu-latest
+    environment: pypi
+    concurrency: release
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: steps.release.outputs.released == 'true'
+        if: steps.build_release.outputs.released == 'true'
 
       - name: Publish package distributions to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@main
-        if: steps.release.outputs.released == 'true'
+        if: steps.build_release.outputs.released == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
