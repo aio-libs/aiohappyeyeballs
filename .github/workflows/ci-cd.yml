@@ -87,10 +87,14 @@ jobs:
         with:
           root_options: --noop
 
+      - uses: snok/install-poetry@v1.3.4
+      - name: Install Dependencies
+        run: poetry install --only test_build
+        shell: bash
+
       - name: Test build of distribution packages
         shell: bash
         run: |
-          poetry install --only test_build
           poetry build
           python -Im twine check --strict dist/*
 
