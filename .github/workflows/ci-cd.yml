@@ -108,7 +108,6 @@ jobs:
       - check_if_should_release
 
     runs-on: ubuntu-latest
-    environment: build_release
     concurrency: release
 
     steps:
