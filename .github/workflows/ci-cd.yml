@@ -108,6 +108,8 @@ jobs:
       - check_if_should_release
 
     runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.release.outputs.released }}
 
     steps:
       - uses: actions/checkout@v4
@@ -119,6 +121,7 @@ jobs:
       - name: Release
         uses: python-semantic-release/python-semantic-release@v8.5.0
         id: release
+
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -148,10 +151,10 @@ jobs:
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: steps.build_release.outputs.released == 'true'
+        if: needs.build_release.outputs.released == 'true'
 
       - name: Publish package distributions to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@1eeda76de33f20e9341a93b0e697c79773c6914c
-        if: steps.build_release.outputs.released == 'true'
+        if: needs.build_release.outputs.released == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
