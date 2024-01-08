@@ -108,7 +108,6 @@ jobs:
       - check_if_should_release
 
     runs-on: ubuntu-latest
-    concurrency: release
 
     steps:
       - uses: actions/checkout@v4
