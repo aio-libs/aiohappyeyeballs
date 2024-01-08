@@ -80,7 +80,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
 
-      # Do a dry run of PSR
+      # Dry run of PSR to build the distribution
       - name: Test release
         uses: python-semantic-release/python-semantic-release@v8.5.0
         if: github.ref_name != 'main'
@@ -115,7 +115,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
 
-      # On main branch: actual PSR + upload to PyPI & GitHub
+      # On main branch: Call PSR to build the distribution
       - name: Release
         uses: python-semantic-release/python-semantic-release@v8.5.0
         id: release
