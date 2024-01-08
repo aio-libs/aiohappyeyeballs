@@ -89,14 +89,14 @@ jobs:
 
       - uses: snok/install-poetry@v1.3.4
       - name: Install Dependencies
-        run: poetry install --only test_build
+        run: poetry install --only main,test_build
         shell: bash
 
       - name: Test build of distribution packages
         shell: bash
         run: |
           poetry build
-          python -Im twine check --strict dist/*
+          poetry run python -Im twine check --strict dist/*
 
   check_if_should_release:
     # This is a dummy step to avoid starting the release step which will
