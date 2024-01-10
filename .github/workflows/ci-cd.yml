@@ -73,6 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: test_release
     concurrency: release
+    if: github.ref_name != 'main'
 
     steps:
       - uses: actions/checkout@v4
@@ -83,7 +84,6 @@ jobs:
       # Dry run of PSR to build the distribution
       - name: Test release
         uses: python-semantic-release/python-semantic-release@v8.5.0
-        if: github.ref_name != 'main'
         with:
           root_options: --noop
 
