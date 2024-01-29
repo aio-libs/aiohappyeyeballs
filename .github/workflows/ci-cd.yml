@@ -98,25 +98,13 @@ jobs:
           poetry build
           poetry run python -Im twine check --strict dist/*
 
-  check_if_should_release:
-    # This is a dummy step to avoid starting the release step which will
-    # trigger a notification when the pypi env needs to be used and we
-    # don't want to do that unless we're actually releasing.
+  build_release:
     needs:
       - test
       - lint
       - commitlint
 
-    if: github.ref_name == 'main' && !startsWith(github.event.pull_request.title,'chore:') && !startsWith(github.event.head_commit.message,'chore:')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dummy
-        run: |
-          echo "GitHub requires the step do something, so we're just going to echo something here."
-
-  build_release:
-    needs:
-      - check_if_should_release
+    if: github.ref_name == 'main' && !startsWith(github.event.pull_request.title,'chore') && !startsWith(github.event.head_commit.message,'chore')
 
     runs-on: ubuntu-latest
     outputs:
@@ -146,6 +134,7 @@ jobs:
     needs:
       - build_release
 
+    if: needs.build_release.outputs.released == 'true'
     runs-on: ubuntu-latest
     environment: pypi
     concurrency: release
@@ -162,10 +151,8 @@ jobs:
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        if: needs.build_release.outputs.released == 'true'
 
       - name: Publish package distributions to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@1eeda76de33f20e9341a93b0e697c79773c6914c
-        if: needs.build_release.outputs.released == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
