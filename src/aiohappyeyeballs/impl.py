@@ -1,4 +1,5 @@
 """Base implementation."""
+
 import asyncio
 import collections
 import functools
@@ -163,9 +164,9 @@ def _interleave_addrinfos(
 ) -> List[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
-    addrinfos_by_family: collections.OrderedDict[
-        int, List[AddrInfoType]
-    ] = collections.OrderedDict()
+    addrinfos_by_family: collections.OrderedDict[int, List[AddrInfoType]] = (
+        collections.OrderedDict()
+    )
     for addr in addrinfos:
         family = addr[0]
         if family not in addrinfos_by_family:
