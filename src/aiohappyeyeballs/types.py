@@ -1,4 +1,5 @@
 """Types for aiohappyeyeballs."""
+
 import socket
 from typing import Tuple, Union
 
