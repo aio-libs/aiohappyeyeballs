@@ -38,11 +38,15 @@
 
 ---
 
-Happy Eyeballs
+[Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs)
+([RFC 8305](https://www.rfc-editor.org/rfc/rfc8305.html))
 
 ## Use case
 
-This library exists to allow connecting with Happy Eyeballs when you
+This library exists to allow connecting with
+[Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs)
+([RFC 8305](https://www.rfc-editor.org/rfc/rfc8305.html))
+when you
 already have a list of addrinfo and not a DNS name.
 
 The stdlib version of `loop.create_connection()`
