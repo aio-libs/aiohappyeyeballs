@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "aiohappyeyeballs"
 version = "2.3.3"
-description = "Happy Eyeballs"
+description = "Happy Eyeballs for asyncio"
 authors = ["J. Nick Koston <nick@koston.org>"]
 license = "PSF-2.0"
 readme = "README.md"
