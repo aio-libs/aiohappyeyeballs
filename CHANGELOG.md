@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.3.3 (2024-07-31)
+
+### Fix
+
+- Add missing python version classifiers (#65) ([`489016f`](https://github.com/aio-libs/aiohappyeyeballs/commit/489016feb53d4fd5f9880f27dc40a5198d5b0be2))
+- Update classifiers to include license (#60) ([`a746c29`](https://github.com/aio-libs/aiohappyeyeballs/commit/a746c296b324407efef272f422a990587b9d6057))
+- Workaround broken `asyncio.staggered` on python &lt; 3.8.2 (#61) ([`b16f107`](https://github.com/aio-libs/aiohappyeyeballs/commit/b16f107d9493817247c27ab83522901f086a13b5))
+- Include tests in the source distribution package (#62) ([`53053b6`](https://github.com/aio-libs/aiohappyeyeballs/commit/53053b6a38ef868e0170940ced5e0611ebd1be4c))
+
 ## v2.3.2 (2024-01-06)
 
 ### Fix
