@@ -122,7 +122,7 @@ jobs:
 
       # On main branch: Call PSR to build the distribution
       - name: Release
-        uses: python-semantic-release/python-semantic-release@v8.5.0
+        uses: python-semantic-release/python-semantic-release@v9.8.6
         id: release
 
         with:
@@ -157,6 +157,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Publish package distributions to GitHub Releases
-        uses: python-semantic-release/upload-to-gh-release@1eeda76de33f20e9341a93b0e697c79773c6914c
+        uses: python-semantic-release/upload-to-gh-release@v9.8.6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
