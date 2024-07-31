@@ -36,15 +36,19 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
+          - "3.8.0"
           - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
         os:
-          - ubuntu-latest
+          - ubuntu-20.04
           - windows-latest
           - macOS-latest
+        exclude:
+          - os: macOS-latest
+            python-version: "3.8.0"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

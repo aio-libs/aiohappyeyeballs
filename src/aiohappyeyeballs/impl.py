@@ -5,10 +5,22 @@ import collections
 import functools
 import itertools
 import socket
+import sys
 from asyncio import staggered
 from typing import List, Optional, Sequence
 
 from .types import AddrInfoType
+
+if sys.version_info < (3, 8, 2):  # noqa: UP036
+    # asyncio.staggered is broken in Python 3.8.0 and 3.8.1
+    # so it must be patched:
+    # https://github.com/aio-libs/aiohttp/issues/8556
+    # https://bugs.python.org/issue39129
+    # https://github.com/python/cpython/pull/17693
+    import asyncio
+    import asyncio.futures
+
+    asyncio.futures.TimeoutError = asyncio.TimeoutError  # type: ignore[attr-defined]
 
 
 async def start_connection(
