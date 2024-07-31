@@ -46,6 +46,9 @@ jobs:
           - ubuntu-20.04
           - windows-latest
           - macOS-latest
+        exclude:
+          - os: macOS-latest
+            python-version: "3.8.0"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
