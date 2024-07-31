@@ -17,7 +17,6 @@ if sys.version_info < (3, 8, 2):  # noqa: UP036
     # https://github.com/aio-libs/aiohttp/issues/8556
     # https://bugs.python.org/issue39129
     # https://github.com/python/cpython/pull/17693
-    import asyncio
     import asyncio.futures
 
     asyncio.futures.TimeoutError = asyncio.TimeoutError  # type: ignore[attr-defined]
