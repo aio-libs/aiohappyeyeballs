@@ -16,6 +16,7 @@ classifiers = [
 ]
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
+    { include = "tests", format = "sdist" },
 ]
 
 [tool.poetry.urls]
