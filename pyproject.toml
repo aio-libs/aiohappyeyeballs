@@ -8,11 +8,12 @@ readme = "README.md"
 repository = "https://github.com/aio-libs/aiohappyeyeballs"
 documentation = "https://aiohappyeyeballs.readthedocs.io"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries",
+    "License :: OSI Approved :: Python Software Foundation License"
 ]
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
