@@ -114,7 +114,6 @@ jobs:
     outputs:
       released: ${{ steps.release.outputs.released }}
 
-    environment: pypi
     concurrency: release
     permissions:
       id-token: write
