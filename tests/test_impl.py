@@ -1,5 +1,6 @@
 import asyncio
 import socket
+import sys
 from types import ModuleType
 from typing import Tuple
 from unittest import mock
@@ -1272,3 +1273,10 @@ async def test_all_same_exception(
         ("dead:aaaa::", 80, 0, 0),
         ("107.6.106.83", 80),
     ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info >= (3, 8, 2), reason="requires < python 3.8.2")
+def test_python_38_compat() -> None:
+    """Verify python < 3.8.2 compatibility."""
+    assert asyncio.futures.TimeoutError is asyncio.TimeoutError  # type: ignore[attr-defined]
