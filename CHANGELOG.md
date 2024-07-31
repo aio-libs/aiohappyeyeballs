@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.4 (2024-07-31)
+
+### Fix
+
+- Add missing asyncio to fix truncated package description (#67) ([`2644df1`](https://github.com/aio-libs/aiohappyeyeballs/commit/2644df179e21e4513da857f2aea2aa64a3fb6316))
+
 ## v2.3.3 (2024-07-31)
 
 ### Fix
