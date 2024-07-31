@@ -161,6 +161,11 @@ jobs:
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
+
       - name: Publish package distributions to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@v9.8.6
         with:
