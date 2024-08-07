@@ -73,7 +73,7 @@ async def start_connection(
         addr_infos = _interleave_addrinfos(addr_infos, interleave)
 
     sock: Optional[socket.socket] = None
-    exceptions: List[List[Exception]] = []
+    exceptions: List[List[OSError]] = []
     if happy_eyeballs_delay is None or single_addr_info:
         # not using happy eyeballs
         for addrinfo in addr_infos:
@@ -114,13 +114,12 @@ async def start_connection(
                 )
                 # If the errno is the same for all exceptions, raise
                 # an OSError with that errno.
-                if isinstance(first_exception, OSError):
-                    first_errno = first_exception.errno
-                    if all(
-                        isinstance(exc, OSError) and exc.errno == first_errno
-                        for exc in all_exceptions
-                    ):
-                        raise OSError(first_errno, msg)
+                first_errno = first_exception.errno
+                if all(
+                    isinstance(exc, OSError) and exc.errno == first_errno
+                    for exc in all_exceptions
+                ):
+                    raise OSError(first_errno, msg)
                 raise OSError(msg)
         finally:
             all_exceptions = None  # type: ignore[assignment]
@@ -131,12 +130,12 @@ async def start_connection(
 
 async def _connect_sock(
     loop: asyncio.AbstractEventLoop,
-    exceptions: List[List[Exception]],
+    exceptions: List[List[OSError]],
     addr_info: AddrInfoType,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
 ) -> socket.socket:
     """Create, bind and connect one socket."""
-    my_exceptions: list[Exception] = []
+    my_exceptions: list[OSError] = []
     exceptions.append(my_exceptions)
     family, type_, proto, _, address = addr_info
     sock = None
