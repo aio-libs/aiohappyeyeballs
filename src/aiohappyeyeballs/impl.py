@@ -99,20 +99,29 @@ async def start_connection(
     if sock is None:
         all_exceptions = [exc for sub in exceptions for exc in sub]
         try:
+            first_exception = all_exceptions[0]
             if len(all_exceptions) == 1:
-                raise all_exceptions[0]
+                raise first_exception
             else:
                 # If they all have the same str(), raise one.
-                model = str(all_exceptions[0])
+                model = str(first_exception)
                 if all(str(exc) == model for exc in all_exceptions):
-                    raise all_exceptions[0]
+                    raise first_exception
                 # Raise a combined exception so the user can see all
                 # the various error messages.
-                raise OSError(
-                    "Multiple exceptions: {}".format(
-                        ", ".join(str(exc) for exc in all_exceptions)
-                    )
+                msg = "Multiple exceptions: {}".format(
+                    ", ".join(str(exc) for exc in all_exceptions)
                 )
+                # If the errno is the same for all exceptions, raise
+                # an OSError with that errno.
+                if isinstance(first_exception, OSError):
+                    first_errno = first_exception.errno
+                    if all(
+                        isinstance(exc, OSError) and exc.errno == first_errno
+                        for exc in all_exceptions
+                    ):
+                        raise OSError(first_errno, msg)
+                raise OSError(msg)
         finally:
             all_exceptions = None  # type: ignore[assignment]
             exceptions = None  # type: ignore[assignment]
