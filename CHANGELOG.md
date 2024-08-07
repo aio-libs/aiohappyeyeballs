@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.3.5 (2024-08-07)
+
+### Fix
+
+- Remove upper bound on python requirement (#74) ([`0de1e53`](https://github.com/aio-libs/aiohappyeyeballs/commit/0de1e534fc5b7526e11bf203ab09b95b13f3070b))
+- Preserve errno if all exceptions have the same errno (#77) ([`7bbb2bf`](https://github.com/aio-libs/aiohappyeyeballs/commit/7bbb2bf0feb3994953a52a1d606e682acad49cb8))
+- Adjust license classifier to better reflect license terms (#78) ([`56e7ba6`](https://github.com/aio-libs/aiohappyeyeballs/commit/56e7ba612c5029364bb960b07022a2b720f0a967))
+
+### Documentation
+
+- Add link to happy eyeballs explanation (#73) ([`077710c`](https://github.com/aio-libs/aiohappyeyeballs/commit/077710c150b6c762ffe408e0ad418c506a2d6f31))
+
 ## v2.3.4 (2024-07-31)
 
 ### Fix
