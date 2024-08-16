@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.6 (2024-08-16)
+
+### Fix
+
+- Adjust license to python-2.0.1 (#82) ([`30a2dc5`](https://github.com/aio-libs/aiohappyeyeballs/commit/30a2dc57c49d1000ebdafa8c81ecf4f79e35c9f3))
+
 ## v2.3.5 (2024-08-07)
 
 ### Fix
