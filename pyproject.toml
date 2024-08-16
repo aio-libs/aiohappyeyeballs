@@ -3,7 +3,7 @@ name = "aiohappyeyeballs"
 version = "2.3.5"
 description = "Happy Eyeballs for asyncio"
 authors = ["J. Nick Koston <nick@koston.org>"]
-license = "Python-2.0"
+license = "Python-2.0.1"
 readme = "README.md"
 repository = "https://github.com/aio-libs/aiohappyeyeballs"
 documentation = "https://aiohappyeyeballs.readthedocs.io"
@@ -17,8 +17,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: Python License (CNRI Python License)"
+    "Programming Language :: Python :: 3.12"
 ]
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
