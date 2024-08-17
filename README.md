@@ -52,7 +52,7 @@ already have a list of addrinfo and not a DNS name.
 The stdlib version of `loop.create_connection()`
 will only work when you pass in an unresolved name which
 is not a good fit when using DNS caching or resolving
-names via another method such was `zeroconf`.
+names via another method such as `zeroconf`.
 
 ## Installation
 
