@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.7 (2024-08-17)
+
+### Fix
+
+- Correct classifier for license python-2.0.1 (#83) ([`186be05`](https://github.com/aio-libs/aiohappyeyeballs/commit/186be056ea441bb3fa7620864f46c6f8431f3a34))
+
 ## v2.3.6 (2024-08-16)
 
 ### Fix
