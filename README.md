@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/aio-libs/aiohappyeyeballs/actions/workflows/ci.yml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/actions/workflow/status/aio-libs/aiohappyeyeballs/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
+    <img src="https://img.shields.io/github/actions/workflow/status/aio-libs/aiohappyeyeballs/ci-cd.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status" >
   </a>
   <a href="https://aiohappyeyeballs.readthedocs.io">
     <img src="https://img.shields.io/readthedocs/aiohappyeyeballs.svg?logo=read-the-docs&logoColor=fff&style=flat-square" alt="Documentation Status">
@@ -38,17 +38,21 @@
 
 ---
 
-Happy Eyeballs
+[Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs)
+([RFC 8305](https://www.rfc-editor.org/rfc/rfc8305.html))
 
 ## Use case
 
-This library exists to allow connecting with Happy Eyeballs when you
+This library exists to allow connecting with
+[Happy Eyeballs](https://en.wikipedia.org/wiki/Happy_Eyeballs)
+([RFC 8305](https://www.rfc-editor.org/rfc/rfc8305.html))
+when you
 already have a list of addrinfo and not a DNS name.
 
 The stdlib version of `loop.create_connection()`
 will only work when you pass in an unresolved name which
 is not a good fit when using DNS caching or resolving
-names via another method such was `zeroconf`.
+names via another method such as `zeroconf`.
 
 ## Installation
 

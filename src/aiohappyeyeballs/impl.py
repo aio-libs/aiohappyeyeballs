@@ -1,13 +1,25 @@
 """Base implementation."""
+
 import asyncio
 import collections
 import functools
 import itertools
 import socket
+import sys
 from asyncio import staggered
 from typing import List, Optional, Sequence
 
 from .types import AddrInfoType
+
+if sys.version_info < (3, 8, 2):  # noqa: UP036
+    # asyncio.staggered is broken in Python 3.8.0 and 3.8.1
+    # so it must be patched:
+    # https://github.com/aio-libs/aiohttp/issues/8556
+    # https://bugs.python.org/issue39129
+    # https://github.com/python/cpython/pull/17693
+    import asyncio.futures
+
+    asyncio.futures.TimeoutError = asyncio.TimeoutError  # type: ignore[attr-defined]
 
 
 async def start_connection(
@@ -61,7 +73,7 @@ async def start_connection(
         addr_infos = _interleave_addrinfos(addr_infos, interleave)
 
     sock: Optional[socket.socket] = None
-    exceptions: List[List[Exception]] = []
+    exceptions: List[List[OSError]] = []
     if happy_eyeballs_delay is None or single_addr_info:
         # not using happy eyeballs
         for addrinfo in addr_infos:
@@ -87,20 +99,28 @@ async def start_connection(
     if sock is None:
         all_exceptions = [exc for sub in exceptions for exc in sub]
         try:
+            first_exception = all_exceptions[0]
             if len(all_exceptions) == 1:
-                raise all_exceptions[0]
+                raise first_exception
             else:
                 # If they all have the same str(), raise one.
-                model = str(all_exceptions[0])
+                model = str(first_exception)
                 if all(str(exc) == model for exc in all_exceptions):
-                    raise all_exceptions[0]
+                    raise first_exception
                 # Raise a combined exception so the user can see all
                 # the various error messages.
-                raise OSError(
-                    "Multiple exceptions: {}".format(
-                        ", ".join(str(exc) for exc in all_exceptions)
-                    )
+                msg = "Multiple exceptions: {}".format(
+                    ", ".join(str(exc) for exc in all_exceptions)
                 )
+                # If the errno is the same for all exceptions, raise
+                # an OSError with that errno.
+                first_errno = first_exception.errno
+                if all(
+                    isinstance(exc, OSError) and exc.errno == first_errno
+                    for exc in all_exceptions
+                ):
+                    raise OSError(first_errno, msg)
+                raise OSError(msg)
         finally:
             all_exceptions = None  # type: ignore[assignment]
             exceptions = None  # type: ignore[assignment]
@@ -110,12 +130,12 @@ async def start_connection(
 
 async def _connect_sock(
     loop: asyncio.AbstractEventLoop,
-    exceptions: List[List[Exception]],
+    exceptions: List[List[OSError]],
     addr_info: AddrInfoType,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
 ) -> socket.socket:
     """Create, bind and connect one socket."""
-    my_exceptions: list[Exception] = []
+    my_exceptions: list[OSError] = []
     exceptions.append(my_exceptions)
     family, type_, proto, _, address = addr_info
     sock = None
@@ -163,9 +183,9 @@ def _interleave_addrinfos(
 ) -> List[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
-    addrinfos_by_family: collections.OrderedDict[
-        int, List[AddrInfoType]
-    ] = collections.OrderedDict()
+    addrinfos_by_family: collections.OrderedDict[int, List[AddrInfoType]] = (
+        collections.OrderedDict()
+    )
     for addr in addrinfos:
         family = addr[0]
         if family not in addrinfos_by_family:

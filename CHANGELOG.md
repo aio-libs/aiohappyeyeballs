@@ -1,5 +1,50 @@
 # Changelog
 
+## v2.3.7 (2024-08-17)
+
+### Fix
+
+- Correct classifier for license python-2.0.1 (#83) ([`186be05`](https://github.com/aio-libs/aiohappyeyeballs/commit/186be056ea441bb3fa7620864f46c6f8431f3a34))
+
+## v2.3.6 (2024-08-16)
+
+### Fix
+
+- Adjust license to python-2.0.1 (#82) ([`30a2dc5`](https://github.com/aio-libs/aiohappyeyeballs/commit/30a2dc57c49d1000ebdafa8c81ecf4f79e35c9f3))
+
+## v2.3.5 (2024-08-07)
+
+### Fix
+
+- Remove upper bound on python requirement (#74) ([`0de1e53`](https://github.com/aio-libs/aiohappyeyeballs/commit/0de1e534fc5b7526e11bf203ab09b95b13f3070b))
+- Preserve errno if all exceptions have the same errno (#77) ([`7bbb2bf`](https://github.com/aio-libs/aiohappyeyeballs/commit/7bbb2bf0feb3994953a52a1d606e682acad49cb8))
+- Adjust license classifier to better reflect license terms (#78) ([`56e7ba6`](https://github.com/aio-libs/aiohappyeyeballs/commit/56e7ba612c5029364bb960b07022a2b720f0a967))
+
+### Documentation
+
+- Add link to happy eyeballs explanation (#73) ([`077710c`](https://github.com/aio-libs/aiohappyeyeballs/commit/077710c150b6c762ffe408e0ad418c506a2d6f31))
+
+## v2.3.4 (2024-07-31)
+
+### Fix
+
+- Add missing asyncio to fix truncated package description (#67) ([`2644df1`](https://github.com/aio-libs/aiohappyeyeballs/commit/2644df179e21e4513da857f2aea2aa64a3fb6316))
+
+## v2.3.3 (2024-07-31)
+
+### Fix
+
+- Add missing python version classifiers (#65) ([`489016f`](https://github.com/aio-libs/aiohappyeyeballs/commit/489016feb53d4fd5f9880f27dc40a5198d5b0be2))
+- Update classifiers to include license (#60) ([`a746c29`](https://github.com/aio-libs/aiohappyeyeballs/commit/a746c296b324407efef272f422a990587b9d6057))
+- Workaround broken `asyncio.staggered` on python &lt; 3.8.2 (#61) ([`b16f107`](https://github.com/aio-libs/aiohappyeyeballs/commit/b16f107d9493817247c27ab83522901f086a13b5))
+- Include tests in the source distribution package (#62) ([`53053b6`](https://github.com/aio-libs/aiohappyeyeballs/commit/53053b6a38ef868e0170940ced5e0611ebd1be4c))
+
+## v2.3.2 (2024-01-06)
+
+### Fix
+
+- Update urls for the new home for this library (#43) ([`c6d4358`](https://github.com/aio-libs/aiohappyeyeballs/commit/c6d43586d5ca56472892767d4a47d28348158544))
+
 ## v2.3.1 (2023-12-14)
 
 ### Fix

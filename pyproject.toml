@@ -1,21 +1,28 @@
 [tool.poetry]
 name = "aiohappyeyeballs"
-version = "2.3.1"
-description = "Happy Eyeballs"
+version = "2.3.7"
+description = "Happy Eyeballs for asyncio"
 authors = ["J. Nick Koston <nick@koston.org>"]
-license = "PSF-2.0"
+license = "Python-2.0.1"
 readme = "README.md"
 repository = "https://github.com/aio-libs/aiohappyeyeballs"
 documentation = "https://aiohappyeyeballs.readthedocs.io"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: Python Software Foundation License"
 ]
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
+    { include = "tests", format = "sdist" },
 ]
 
 [tool.poetry.urls]
@@ -23,7 +30,7 @@ packages = [
 "Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
@@ -38,6 +45,10 @@ myst-parser = ">=0.16"
 sphinx = ">=4.0"
 furo = ">=2023.5.20"
 sphinx-autobuild = ">=2021.3.14"
+
+
+[tool.poetry.group.test_build.dependencies]
+twine = "^4.0.2"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:tool.poetry.version"]
