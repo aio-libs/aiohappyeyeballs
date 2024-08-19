@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.4.0 (2024-08-19)
+
+### Feature
+
+- Add support for python 3.13 (#86) ([`4f2152f`](https://github.com/aio-libs/aiohappyeyeballs/commit/4f2152fbb6b1d915c2fd68219339d998c47a71f9))
+
+### Documentation
+
+- Fix a trivial typo in readme.md (#84) ([`f5ae7d4`](https://github.com/aio-libs/aiohappyeyeballs/commit/f5ae7d4bce04ee0645257ac828745a3b989ef149))
+
 ## v2.3.7 (2024-08-17)
 
 ### Fix
