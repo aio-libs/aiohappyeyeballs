@@ -62,7 +62,7 @@ Install this via pip (or your favourite package manager):
 
 ## License
 
-aiohappyeyeballs is licensed under the same terms a cpython itself.
+[aiohappyeyeballs is licensed under the same terms a cpython itself.](https://github.com/python/cpython/blob/main/LICENSE)
 
 ## Example usage
 
