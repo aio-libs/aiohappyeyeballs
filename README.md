@@ -60,6 +60,10 @@ Install this via pip (or your favourite package manager):
 
 `pip install aiohappyeyeballs`
 
+## License
+
+aiohappyeyeballs is licensed under the same terms a cpython itself.
+
 ## Example usage
 
 ```python
