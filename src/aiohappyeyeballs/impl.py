@@ -93,7 +93,6 @@ async def start_connection(
                 for addrinfo in addr_infos
             ),
             happy_eyeballs_delay,
-            loop=current_loop,
         )
 
     if sock is None:
