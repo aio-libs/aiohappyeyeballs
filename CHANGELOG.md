@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.1 (2024-09-26)
+
+### Fix
+
+- Avoid passing loop to staggered.staggered_race (#94) ([`5f80b79`](https://github.com/aio-libs/aiohappyeyeballs/commit/5f80b7951f32d727039d9db776a17a6eba8877cd))
+
 ## v2.4.0 (2024-08-19)
 
 ### Feature
