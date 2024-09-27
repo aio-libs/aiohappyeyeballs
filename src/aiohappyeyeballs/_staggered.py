@@ -67,8 +67,8 @@ async def staggered_race(
     # TODO: when we have aiter() and anext(), allow async iterables in coro_fns.
     loop = loop or events.get_running_loop()
     enum_coro_fns = enumerate(coro_fns)
-    winner_result = None
-    winner_index = None
+    winner_result: Optional[_T] = None
+    winner_index: Optional[int] = None
     exceptions: List[Optional[BaseException]] = []
     running_tasks: List[tasks.Task[None]] = []
 
