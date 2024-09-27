@@ -70,9 +70,9 @@ async def staggered_race(
     winner_result = None
     winner_index = None
     exceptions: List[Optional[BaseException]] = []
-    running_tasks: List[tasks.Task] = []
+    running_tasks: List[tasks.Task[None]] = []
 
-    async def run_one_coro(previous_failed) -> None:
+    async def run_one_coro(previous_failed: Optional[locks.Event]) -> None:
         # Wait for the previous task to finish, or for delay seconds
         if previous_failed is not None:
             with contextlib.suppress(exceptions_mod.TimeoutError):
@@ -90,10 +90,10 @@ async def staggered_race(
         this_failed = locks.Event()
         next_task = loop.create_task(run_one_coro(this_failed))
         running_tasks.append(next_task)
-        assert len(running_tasks) == this_index + 2
+        assert len(running_tasks) == this_index + 2  # noqa: S101
         # Prepare place to put this coroutine's exceptions if not won
         exceptions.append(None)
-        assert len(exceptions) == this_index + 1
+        assert len(exceptions) == this_index + 1  # noqa: S101
 
         try:
             result = await coro_fn()
@@ -105,7 +105,7 @@ async def staggered_race(
         else:
             # Store winner's results
             nonlocal winner_index, winner_result
-            assert winner_index is None
+            assert winner_index is None  # noqa: S101
             winner_index = this_index
             winner_result = result
             # Cancel all other tasks. We take care to not cancel the current
@@ -133,7 +133,7 @@ async def staggered_race(
             if __debug__:
                 for d in done:
                     if d.done() and not d.cancelled() and d.exception():
-                        raise d.exception()
+                        raise d.exception()  # type: ignore
         return winner_result, winner_index, exceptions
     finally:
         # Make sure no tasks are left running if we leave this function
