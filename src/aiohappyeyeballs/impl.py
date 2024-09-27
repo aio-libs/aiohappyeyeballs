@@ -6,9 +6,9 @@ import functools
 import itertools
 import socket
 import sys
-from asyncio import staggered
 from typing import List, Optional, Sequence
 
+from . import staggered
 from .types import AddrInfoType
 
 if sys.version_info < (3, 8, 2):  # noqa: UP036
