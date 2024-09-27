@@ -1370,7 +1370,6 @@ async def test_all_same_exception_and_with_different_errno(
 
 @patch_socket
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info < (3, 12), reason="requires > python 3.12")
 async def test_handling_system_exit(
     m_socket: ModuleType,
 ) -> None:
