@@ -1434,7 +1434,6 @@ async def test_handling_system_exit(
         ),
     ]
     loop = asyncio.get_running_loop()
-    # We should get the same exception raised if they are all the same
     with pytest.raises(SystemExit), mock.patch.object(
         loop, "sock_connect", _sock_connect
     ):
