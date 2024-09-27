@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.2 (2024-09-27)
+
+### Fix
+
+- Copy staggered from standard lib for python 3.12+ (#95) ([`c5a4023`](https://github.com/aio-libs/aiohappyeyeballs/commit/c5a4023d904b3e72f30b8a9f56913894dda4c9d0))
+
 ## v2.4.1 (2024-09-26)
 
 ### Fix

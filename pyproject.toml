@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiohappyeyeballs"
-version = "2.4.1"
+version = "2.4.2"
 description = "Happy Eyeballs for asyncio"
 authors = ["J. Nick Koston <nick@koston.org>"]
 license = "Python-2.0.1"
