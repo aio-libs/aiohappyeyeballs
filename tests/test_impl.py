@@ -1450,6 +1450,93 @@ async def test_handling_system_exit(
     ]
 
 
+@patch_socket
+@pytest.mark.asyncio
+async def test_cancellation_is_not_swallowed(
+    m_socket: ModuleType,
+) -> None:
+    """Test that cancellation is not swallowed."""
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1),
+    )
+    create_calls = []
+
+    def _socket(*args, **kw):
+        for attr in kw:
+            setattr(mock_socket, attr, kw[attr])
+        return mock_socket
+
+    async def _sock_connect(
+        sock: socket.socket, address: Tuple[str, int, int, int]
+    ) -> None:
+        create_calls.append(address)
+        await asyncio.sleep(1000)
+
+    m_socket.socket = _socket  # type: ignore
+    ipv6_addr_info = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::", 80, 0, 0),
+    )
+    ipv6_addr_info_2 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:aaaa::", 80, 0, 0),
+    )
+    ipv4_addr_info = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.83", 80),
+    )
+    addr_info = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
+    local_addr_infos = [
+        (
+            socket.AF_INET6,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("::1", 0, 0, 0),
+        ),
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("127.0.0.1", 0),
+        ),
+    ]
+    loop = asyncio.get_running_loop()
+    # We should get the same exception raised if they are all the same
+    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
+        asyncio.CancelledError
+    ):
+        task = asyncio.create_task(
+            start_connection(
+                addr_info,
+                happy_eyeballs_delay=0.3,
+                interleave=2,
+                local_addr_infos=local_addr_infos,
+            )
+        )
+        await asyncio.sleep(0)
+        task.cancel()
+        await task
+
+    # After calls are cancelled now more are made
+    assert create_calls == [
+        ("dead:beef::", 80, 0, 0),
+    ]
+
+
 @pytest.mark.asyncio
 @pytest.mark.skipif(sys.version_info >= (3, 8, 2), reason="requires < python 3.8.2")
 def test_python_38_compat() -> None:
