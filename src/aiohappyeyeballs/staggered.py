@@ -132,20 +132,20 @@ async def staggered_race(
                 wait_next: asyncio.Future[
                     Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
                 ] = loop.create_future()
-                _on_completion = partial(_on_completion, wait_next)
+                _on_completion_w_future = partial(_on_completion, wait_next)
 
                 if wakeup_next:
-                    wakeup_next.add_done_callback(_on_completion)
+                    wakeup_next.add_done_callback(_on_completion_w_future)
                 for t in tasks:
-                    t.add_done_callback(_on_completion)
+                    t.add_done_callback(_on_completion_w_future)
 
                 try:
                     done = await wait_next
                 finally:
                     if wakeup_next:
-                        wakeup_next.remove_done_callback(_on_completion)
+                        wakeup_next.remove_done_callback(_on_completion_w_future)
                     for t in tasks:
-                        t.remove_done_callback(_on_completion)
+                        t.remove_done_callback(_on_completion_w_future)
 
                 if done is wakeup_next:
                     if timer:
