@@ -112,6 +112,17 @@ async def staggered_race(
         this_index: int,
         start_next: "asyncio.Future[None]",
     ) -> Optional[Tuple[_T, int]]:
+        """
+        Run a single coroutine.
+
+        If the coroutine fails, set the exception in the exceptions list and
+        start the next coroutine by setting the result of the start_next.
+
+        If the coroutine succeeds, return the result and the index of the
+        coroutine in the coro_fns list.
+
+        If SystemExit or KeyboardInterrupt is raised, re-raise it.
+        """
         try:
             result = await coro_fn()
         except (SystemExit, KeyboardInterrupt):
