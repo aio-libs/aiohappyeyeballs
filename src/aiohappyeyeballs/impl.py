@@ -121,7 +121,11 @@ async def start_connection(
                         for exc in all_exceptions
                     ):
                         raise OSError(first_errno, msg)
-                # Otherwise we have to pick which one to raise.
+                elif isinstance(first_exception, RuntimeError):
+                    if all(isinstance(exc, RuntimeError) for exc in all_exceptions):
+                        raise RuntimeError(msg)
+                # We have a mix of OSError and RuntimeError
+                # so we have to pick which one to raise.
                 # and we raise OSError for compatibility
                 raise OSError(msg)
         finally:
