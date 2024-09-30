@@ -105,17 +105,15 @@ async def staggered_race(
     last_index = len(to_run) - 1
     try:
         for this_index, coro_fn in enumerate(to_run):
+            exceptions.append(None)
             if this_index == last_index:
                 wakeup_next: Optional[asyncio.Future[None]] = loop.create_future()
             else:
                 wakeup_next = None
+
             task: asyncio.Task[Optional[Tuple[_T, int]]] = loop.create_task(
                 run_one_coro(coro_fn, this_index, wakeup_next)
             )
-            if task.done() and (winner := task.result()):
-                # Eager start, task already done
-                return *winner, exceptions
-
             tasks.add(task)
             if delay and wakeup_next:
                 timer = loop.call_later(delay, _set_result_if_not_done, wakeup_next)
@@ -126,20 +124,24 @@ async def staggered_race(
                 ] = [*tasks]
                 if wakeup_next:
                     waiters.append(wakeup_next)
+
                 dones, _ = await asyncio.wait(
                     waiters, return_when=asyncio.FIRST_COMPLETED
                 )
-                start_next = False
+                kick_start_next = False
+
                 for done in dones:
                     if done is wakeup_next:
-                        start_next = True
-                    else:
-                        tasks.discard(done)  # type: ignore[arg-type]
-                        if winner := task.result():
-                            return *winner, exceptions
-                if start_next:
-                    if timer:
-                        timer.cancel()
+                        kick_start_next = True
+                        if timer:
+                            timer.cancel()
+                        continue
+
+                    tasks.discard(done)  # type: ignore[arg-type]
+                    if winner := task.result():
+                        return *winner, exceptions
+
+                if kick_start_next:
                     break
     finally:
         for task in tasks:
