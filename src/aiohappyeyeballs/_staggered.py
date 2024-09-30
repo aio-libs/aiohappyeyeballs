@@ -1,8 +1,8 @@
 import asyncio
 import contextlib
-from functools import partial
 from typing import (
     TYPE_CHECKING,
+    Any,
     Awaitable,
     Callable,
     Iterable,
@@ -15,13 +15,32 @@ from typing import (
 )
 
 _T = TypeVar("_T")
-_R = TypeVar("_R")
 
 
-def _set_result(wait_next: "asyncio.Future[_R]", done: _R) -> None:
+def _set_result(wait_next: "asyncio.Future[_T]", done: _T) -> None:
     """Set the result of a future if it is not already done."""
     if not wait_next.done():
         wait_next.set_result(done)
+
+
+async def _wait_one(
+    futures: "Iterable[asyncio.Future[Any]]",
+    loop: asyncio.AbstractEventLoop,
+) -> _T:
+    """Wait for the first future to complete."""
+    wait_next = loop.create_future()
+
+    def _on_completion(fut: "asyncio.Future[Any]") -> None:
+        _set_result(wait_next, fut)
+
+    for f in futures:
+        f.add_done_callback(_on_completion)
+
+    try:
+        return await wait_next
+    finally:
+        for f in futures:
+            f.remove_done_callback(_on_completion)
 
 
 async def staggered_race(
@@ -107,9 +126,8 @@ async def staggered_race(
     start_next_timer: Optional[asyncio.TimerHandle] = None
     wakeup_next: Optional[asyncio.Future[None]]
     task: asyncio.Task[Optional[Tuple[_T, int]]]
-    wait_next: asyncio.Future[
-        Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
-    ]
+    waiters: Iterable[asyncio.Future[Any]]
+    done: Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
     to_run = list(coro_fns)
     last_index = len(to_run) - 1
     try:
@@ -126,21 +144,12 @@ async def staggered_race(
                 start_next_timer = None
 
             while tasks:
-                wait_next = loop.create_future()
-                _on_completion_w_future = partial(_set_result, wait_next)
-
                 if wakeup_next:
-                    wakeup_next.add_done_callback(_on_completion_w_future)
-                for t in tasks:
-                    t.add_done_callback(_on_completion_w_future)
+                    waiters = [*tasks, wakeup_next]
+                else:
+                    waiters = tasks
 
-                try:
-                    done = await wait_next
-                finally:
-                    if wakeup_next:
-                        wakeup_next.remove_done_callback(_on_completion_w_future)
-                    for t in tasks:
-                        t.remove_done_callback(_on_completion_w_future)
+                done = await _wait_one(waiters, loop)
 
                 if done is wakeup_next:
                     # The current task has failed or the timer has expired
