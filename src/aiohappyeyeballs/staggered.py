@@ -104,7 +104,7 @@ async def staggered_race(
 
     def _on_completion(
         wait_next: "asyncio.Future[Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]]",  # noqa: E501
-        done: Union["asyncio.Future[None]", asyncio.Task[Optional[Tuple[_T, int]]]],
+        done: "Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]",
     ) -> None:
         wait_next.set_result(done)
 
