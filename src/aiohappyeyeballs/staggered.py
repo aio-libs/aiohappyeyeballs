@@ -111,27 +111,27 @@ async def staggered_race(
         wait_next.set_result(done)
 
     timer: Optional[asyncio.TimerHandle] = None
+    wakeup_next: Optional[asyncio.Future[None]]
+    task: asyncio.Task[Optional[Tuple[_T, int]]]
+    wait_next: asyncio.Future[
+        Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
+    ]
     to_run = list(coro_fns)
     last_index = len(to_run) - 1
     try:
         for this_index, coro_fn in enumerate(to_run):
             exceptions.append(None)
             if this_index == last_index:
-                wakeup_next: Optional[asyncio.Future[None]] = loop.create_future()
+                wakeup_next = loop.create_future()
             else:
                 wakeup_next = None
 
-            task: asyncio.Task[Optional[Tuple[_T, int]]] = loop.create_task(
-                run_one_coro(coro_fn, this_index, wakeup_next)
-            )
-            tasks.add(task)
+            tasks.add(loop.create_task(run_one_coro(coro_fn, this_index, wakeup_next)))
             if delay and wakeup_next:
                 timer = loop.call_later(delay, _set_result_if_not_done, wakeup_next)
 
             while tasks:
-                wait_next: asyncio.Future[
-                    Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
-                ] = loop.create_future()
+                wait_next = loop.create_future()
                 _on_completion_w_future = partial(_on_completion, wait_next)
 
                 if wakeup_next:
@@ -157,7 +157,7 @@ async def staggered_race(
 
                 tasks.discard(done)
                 try:
-                    if winner := task.result():
+                    if winner := done.result():
                         return *winner, exceptions
                 finally:
                     # Make sure the Timer is cancelled if the task is going
