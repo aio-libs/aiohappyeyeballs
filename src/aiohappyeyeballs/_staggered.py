@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 from typing import (
     TYPE_CHECKING,
-    Any,
     Awaitable,
     Callable,
     Iterable,
@@ -21,27 +20,6 @@ def _set_result(wait_next: "asyncio.Future[None]") -> None:
     """Set the result of a future if it is not already done."""
     if not wait_next.done():
         wait_next.set_result(None)
-
-
-async def _wait_one(
-    futures: "Iterable[asyncio.Future[Any]]",
-    loop: asyncio.AbstractEventLoop,
-) -> _T:
-    """Wait for the first future to complete."""
-    wait_next = loop.create_future()
-
-    def _on_completion(fut: "asyncio.Future[Any]") -> None:
-        if not wait_next.done():
-            wait_next.set_result(fut)
-
-    for f in futures:
-        f.add_done_callback(_on_completion)
-
-    try:
-        return await wait_next
-    finally:
-        for f in futures:
-            f.remove_done_callback(_on_completion)
 
 
 async def staggered_race(
@@ -138,6 +116,9 @@ async def staggered_race(
     start_next: Optional[asyncio.Future[None]]
     task: asyncio.Task[Optional[Tuple[_T, int]]]
     done: Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
+    waiters: Iterable[
+        Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
+    ]
     coro_iter = iter(coro_fns)
     this_index = -1
     try:
@@ -155,9 +136,12 @@ async def staggered_race(
                 break
 
             while tasks:
-                done = await _wait_one(
-                    [*tasks, start_next] if start_next else tasks, loop
+                waiters = [*tasks, start_next] if start_next else tasks
+                dones, _ = await asyncio.wait(
+                    waiters,
+                    return_when=asyncio.FIRST_COMPLETED,
                 )
+                done = dones.pop()
                 if done is start_next:
                     # The current task has failed or the timer has expired
                     # so we need to start the next task.
