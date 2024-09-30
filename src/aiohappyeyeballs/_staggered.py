@@ -157,6 +157,7 @@ async def staggered_race(
                     # so we need to start the next task.
                     if start_next_timer:
                         start_next_timer.cancel()
+                        start_next_timer = None
                     break
 
                 if TYPE_CHECKING:
