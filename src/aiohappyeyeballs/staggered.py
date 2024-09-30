@@ -1,5 +1,6 @@
 import asyncio
 from typing import (
+    TYPE_CHECKING,
     Awaitable,
     Callable,
     Iterable,
@@ -137,7 +138,10 @@ async def staggered_race(
                             timer.cancel()
                         continue
 
-                    tasks.discard(done)  # type: ignore[arg-type]
+                    if TYPE_CHECKING:
+                        assert isinstance(done, asyncio.Task)
+
+                    tasks.discard(done)
                     if winner := task.result():
                         return *winner, exceptions
 
