@@ -17,10 +17,10 @@ from typing import (
 _T = TypeVar("_T")
 
 
-def _set_result(wait_next: "asyncio.Future[_T]", done: _T) -> None:
+def _set_result(wait_next: "asyncio.Future[None]") -> None:
     """Set the result of a future if it is not already done."""
     if not wait_next.done():
-        wait_next.set_result(done)
+        wait_next.set_result(None)
 
 
 async def _wait_one(
@@ -31,7 +31,8 @@ async def _wait_one(
     wait_next = loop.create_future()
 
     def _on_completion(fut: "asyncio.Future[Any]") -> None:
-        _set_result(wait_next, fut)
+        if not wait_next.done():
+            wait_next.set_result(fut)
 
     for f in futures:
         f.add_done_callback(_on_completion)
@@ -117,7 +118,7 @@ async def staggered_race(
             raise
         except BaseException as e:
             exceptions[this_index] = e
-            _set_result(start_next, None)
+            _set_result(start_next)
             return None
 
         return result, this_index
@@ -139,9 +140,7 @@ async def staggered_race(
                     loop.create_task(run_one_coro(coro_fn, this_index, start_next))
                 )
                 if delay:
-                    start_next_timer = loop.call_later(
-                        delay, _set_result, start_next, None
-                    )
+                    start_next_timer = loop.call_later(delay, _set_result, start_next)
                 else:
                     start_next_timer = None
             else:
