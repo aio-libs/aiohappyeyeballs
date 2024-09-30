@@ -17,7 +17,7 @@ from typing import (
 _T = TypeVar("_T")
 
 
-def _set_result_if_not_done(fut: "asyncio.Future[None]") -> None:
+def _set_result(fut: "asyncio.Future[None]") -> None:
     """Set the result of a future if it is not already done."""
     if not fut.done():
         fut.set_result(None)
@@ -98,7 +98,7 @@ async def staggered_race(
         except BaseException as ex:
             exceptions[this_index] = ex
             if wakeup_next:
-                _set_result_if_not_done(wakeup_next)
+                _set_result(wakeup_next)
             return None
 
         return result, this_index
@@ -109,7 +109,7 @@ async def staggered_race(
     ) -> None:
         wait_next.set_result(done)
 
-    timer: Optional[asyncio.TimerHandle] = None
+    start_next_timer: Optional[asyncio.TimerHandle] = None
     wakeup_next: Optional[asyncio.Future[None]]
     task: asyncio.Task[Optional[Tuple[_T, int]]]
     wait_next: asyncio.Future[
@@ -124,9 +124,9 @@ async def staggered_race(
 
             tasks.add(loop.create_task(run_one_coro(coro_fn, this_index, wakeup_next)))
             if delay and wakeup_next:
-                timer = loop.call_later(delay, _set_result_if_not_done, wakeup_next)
+                start_next_timer = loop.call_later(delay, _set_result, wakeup_next)
             else:
-                timer = None
+                start_next_timer = None
 
             while tasks:
                 wait_next = loop.create_future()
@@ -148,8 +148,8 @@ async def staggered_race(
                 if done is wakeup_next:
                     # The current task has failed or the timer has expired
                     # so we need to start the next task.
-                    if timer:
-                        timer.cancel()
+                    if start_next_timer:
+                        start_next_timer.cancel()
                     break
 
                 if TYPE_CHECKING:
@@ -162,8 +162,8 @@ async def staggered_race(
                 finally:
                     # Make sure the Timer is cancelled if the task is going
                     # to raise KeyboardInterrupt or SystemExit.
-                    if timer:
-                        timer.cancel()
+                    if start_next_timer:
+                        start_next_timer.cancel()
 
     finally:
         # We either have a winner or a KeyboardInterrupt
