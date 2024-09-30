@@ -15,12 +15,18 @@ from typing import (
 )
 
 _T = TypeVar("_T")
+_R = TypeVar("_R")
 
 
 def _set_result(fut: "asyncio.Future[None]") -> None:
     """Set the result of a future if it is not already done."""
     if not fut.done():
         fut.set_result(None)
+
+
+def _on_completion(wait_next: "asyncio.Future[_R]", done: _R) -> None:
+    if not wait_next.done():
+        wait_next.set_result(done)
 
 
 async def staggered_race(
@@ -102,13 +108,6 @@ async def staggered_race(
             return None
 
         return result, this_index
-
-    def _on_completion(
-        wait_next: "asyncio.Future[Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]]",  # noqa: E501
-        done: "Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]",
-    ) -> None:
-        if not wait_next.done():
-            wait_next.set_result(done)
 
     start_next_timer: Optional[asyncio.TimerHandle] = None
     wakeup_next: Optional[asyncio.Future[None]]
