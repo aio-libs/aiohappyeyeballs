@@ -142,10 +142,8 @@ async def staggered_race(
                     start_next_timer = loop.call_later(delay, _set_result, start_next)
                 else:
                     start_next_timer = None
-            else:
-                start_next = None
-                if not tasks:
-                    break
+            elif not tasks:
+                break
 
             while tasks:
                 if start_next:
@@ -153,6 +151,7 @@ async def staggered_race(
                     if done is start_next:
                         # The current task has failed or the timer has expired
                         # so we need to start the next task.
+                        start_next = None
                         if start_next_timer:
                             start_next_timer.cancel()
                             start_next_timer = None
