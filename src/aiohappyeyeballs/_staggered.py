@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -170,9 +171,7 @@ async def staggered_race(
         # or SystemExit.
         for task in tasks:
             task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await task
-            except asyncio.CancelledError:
-                pass
 
     return None, None, exceptions
