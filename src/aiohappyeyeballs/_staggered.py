@@ -144,11 +144,7 @@ async def staggered_race(
                 start_next_timer = None
 
             while tasks:
-                if wakeup_next:
-                    waiters = [*tasks, wakeup_next]
-                else:
-                    waiters = tasks
-
+                waiters = [*tasks, wakeup_next] if wakeup_next else tasks
                 done = await _wait_one(waiters, loop)
 
                 if done is wakeup_next:
