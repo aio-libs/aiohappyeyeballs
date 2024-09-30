@@ -148,10 +148,9 @@ async def staggered_race(
                 start_next = loop.create_future()
                 task = loop.create_task(run_one_coro(coro_fn, this_index, start_next))
                 tasks.add(task)
-                if delay:
-                    start_next_timer = loop.call_later(delay, _set_result, start_next)
-                else:
-                    start_next_timer = None
+                start_next_timer = (
+                    loop.call_later(delay, _set_result, start_next) if delay else None
+                )
             elif not tasks:
                 break
 
