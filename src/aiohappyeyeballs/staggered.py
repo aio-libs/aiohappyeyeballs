@@ -1,6 +1,5 @@
 import asyncio
 from typing import (
-    Any,
     Awaitable,
     Callable,
     Iterable,
@@ -81,60 +80,66 @@ async def staggered_race(
 
     """
     loop = loop or asyncio.get_running_loop()
-    winner_future: asyncio.Future[Tuple[_T, int]] = loop.create_future()
     exceptions: List[Optional[BaseException]] = []
-    tasks: Set[asyncio.Task[None]] = set()
+    tasks: Set[asyncio.Task[Optional[Tuple[_T, int]]]] = set()
 
     async def run_one_coro(
         coro_fn: Callable[[], Awaitable[_T]],
         this_index: int,
         wakeup_next: Optional[asyncio.Future[None]],
-    ) -> None:
+    ) -> Optional[Tuple[_T, int]]:
         try:
             result = await coro_fn()
-        except (SystemExit, KeyboardInterrupt) as ex:
-            winner_future.set_exception(ex)
+        except (SystemExit, KeyboardInterrupt):
+            raise
         except BaseException as ex:
             exceptions[this_index] = ex
             if wakeup_next:
                 _set_result_if_not_done(wakeup_next)
-        else:
-            winner_future.set_result((result, this_index))
+            return None
+
+        return result, this_index
 
     timer: Optional[asyncio.TimerHandle] = None
     to_run = list(coro_fns)
     last_index = len(to_run) - 1
     try:
         for this_index, coro_fn in enumerate(to_run):
-            if this_index != last_index:
+            if this_index == last_index:
                 wakeup_next: Optional[asyncio.Future[None]] = loop.create_future()
             else:
                 wakeup_next = None
-            task: asyncio.Task[None] = loop.create_task(
+            task: asyncio.Task[Optional[Tuple[_T, int]]] = loop.create_task(
                 run_one_coro(coro_fn, this_index, wakeup_next)
             )
-            if winner_future.done():
+            if task.done() and (winner := task.result()):
                 # Eager start, task already done
-                return *winner_future.result(), exceptions
+                return *winner, exceptions
 
             tasks.add(task)
-            task.add_done_callback(tasks.discard)
             if delay and wakeup_next:
                 timer = loop.call_later(delay, _set_result_if_not_done, wakeup_next)
 
             while tasks:
-                waiter: List[Union[asyncio.Future[Any], asyncio.Task[Any]]] = [
-                    winner_future,
-                    *tasks,
-                ]
+                waiters: List[
+                    Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
+                ] = [*tasks]
                 if wakeup_next:
-                    waiter.append(wakeup_next)
-                await asyncio.wait(waiter, return_when=asyncio.FIRST_COMPLETED)
-                if winner_future.done():
+                    waiters.append(wakeup_next)
+                dones, _ = await asyncio.wait(
+                    waiters, return_when=asyncio.FIRST_COMPLETED
+                )
+                start_next = False
+                for done in dones:
+                    if done is wakeup_next:
+                        start_next = True
+                    else:
+                        tasks.discard(done)  # type: ignore[arg-type]
+                        if winner := task.result():
+                            return *winner, exceptions
+                if start_next:
                     if timer:
                         timer.cancel()
-                    return *winner_future.result(), exceptions
-                if wakeup_next and wakeup_next.done():
                     break
     finally:
         for task in tasks:
