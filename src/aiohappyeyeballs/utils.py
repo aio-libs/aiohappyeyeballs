@@ -10,7 +10,7 @@ from .types import AddrInfoType
 def addr_to_addr_infos(
     addr: Optional[
         Union[Tuple[str, int, int, int], Tuple[str, int, int], Tuple[str, int]]
-    ]
+    ],
 ) -> Optional[List[AddrInfoType]]:
     """Convert an address tuple to a list of addr_info tuples."""
     if addr is None:
@@ -59,7 +59,7 @@ def pop_addr_infos_interleave(
 
 
 def _addr_tuple_to_ip_address(
-    addr: Union[Tuple[str, int], Tuple[str, int, int, int]]
+    addr: Union[Tuple[str, int], Tuple[str, int, int, int]],
 ) -> Union[
     Tuple[ipaddress.IPv4Address, int], Tuple[ipaddress.IPv6Address, int, int, int]
 ]:

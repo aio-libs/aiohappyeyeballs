@@ -17,7 +17,6 @@ def tearDownModule():
 
 
 class EagerTaskFactoryLoopTests(unittest.TestCase):
-
     def close_loop(self, loop):
         loop.close()
 
