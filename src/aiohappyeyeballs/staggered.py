@@ -134,18 +134,22 @@ async def staggered_race(
                 for done in dones:
                     if done is wakeup_next:
                         kick_start_next = True
-                        if timer:
-                            timer.cancel()
                         continue
 
                     if TYPE_CHECKING:
                         assert isinstance(done, asyncio.Task)
 
                     tasks.discard(done)
-                    if winner := task.result():
-                        return *winner, exceptions
+                    try:
+                        if winner := task.result():
+                            return *winner, exceptions
+                    finally:
+                        if timer:
+                            timer.cancel()
 
                 if kick_start_next:
+                    if timer:
+                        timer.cancel()
                     break
     finally:
         for task in tasks:
