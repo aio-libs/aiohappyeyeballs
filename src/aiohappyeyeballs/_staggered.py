@@ -156,21 +156,20 @@ async def staggered_race(
                 break
 
             while tasks:
-                if start_next:
-                    done = await _wait_one([*tasks, start_next], loop)
-                    if done is start_next:
-                        # The current task has failed or the timer has expired
-                        # so we need to start the next task.
-                        start_next = None
-                        if start_next_timer:
-                            start_next_timer.cancel()
-                            start_next_timer = None
+                done = await _wait_one(
+                    [*tasks, start_next] if start_next else tasks, loop
+                )
+                if done is start_next:
+                    # The current task has failed or the timer has expired
+                    # so we need to start the next task.
+                    start_next = None
+                    if start_next_timer:
+                        start_next_timer.cancel()
+                        start_next_timer = None
 
-                        # Break out of the task waiting loop to start the next
-                        # task.
-                        break
-                else:
-                    done = await _wait_one(tasks, loop)
+                    # Break out of the task waiting loop to start the next
+                    # task.
+                    break
 
                 if TYPE_CHECKING:
                     assert isinstance(done, asyncio.Task)
