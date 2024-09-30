@@ -1,4 +1,5 @@
 import asyncio
+from functools import partial
 from typing import (
     TYPE_CHECKING,
     Awaitable,
@@ -101,6 +102,14 @@ async def staggered_race(
 
         return result, this_index
 
+    def _on_completion(
+        wait_next: asyncio.Future[
+            Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
+        ],
+        done: Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]],
+    ) -> None:
+        wait_next.set_result(done)
+
     timer: Optional[asyncio.TimerHandle] = None
     to_run = list(coro_fns)
     last_index = len(to_run) - 1
@@ -120,39 +129,42 @@ async def staggered_race(
                 timer = loop.call_later(delay, _set_result_if_not_done, wakeup_next)
 
             while tasks:
-                waiters: List[
+                wait_next: asyncio.Future[
                     Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
-                ] = [*tasks]
+                ] = loop.create_future()
+                _on_completion = partial(_on_completion, wait_next)
+
                 if wakeup_next:
-                    waiters.append(wakeup_next)
+                    wakeup_next.add_done_callback(_on_completion)
+                for t in tasks:
+                    t.add_done_callback(_on_completion)
 
-                dones, _ = await asyncio.wait(
-                    waiters, return_when=asyncio.FIRST_COMPLETED
-                )
-                kick_start_next = False
+                try:
+                    done = await wait_next
+                finally:
+                    if wakeup_next:
+                        wakeup_next.remove_done_callback(_on_completion)
+                    for t in tasks:
+                        t.remove_done_callback(_on_completion)
 
-                for done in dones:
-                    if done is wakeup_next:
-                        kick_start_next = True
-                        continue
-
-                    if TYPE_CHECKING:
-                        assert isinstance(done, asyncio.Task)
-
-                    tasks.discard(done)
-                    try:
-                        if winner := task.result():
-                            return *winner, exceptions
-                    finally:
-                        # Make sure the Timer is cancelled if the task is going
-                        # to raise KeyboardInterrupt or SystemExit.
-                        if timer:
-                            timer.cancel()
-
-                if kick_start_next:
+                if done is wakeup_next:
                     if timer:
                         timer.cancel()
                     break
+
+                if TYPE_CHECKING:
+                    assert isinstance(done, asyncio.Task)
+
+                tasks.discard(done)
+                try:
+                    if winner := task.result():
+                        return *winner, exceptions
+                finally:
+                    # Make sure the Timer is cancelled if the task is going
+                    # to raise KeyboardInterrupt or SystemExit.
+                    if timer:
+                        timer.cancel()
+
     finally:
         for task in tasks:
             task.cancel()
