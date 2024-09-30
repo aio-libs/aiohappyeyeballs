@@ -1,3 +1,10 @@
+"""
+Tests for staggered_race.
+
+These tests are copied from cpython to ensure our implementation is
+compatible with the one in cpython.
+"""
+
 import asyncio
 import unittest
 
