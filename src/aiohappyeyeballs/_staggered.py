@@ -155,6 +155,9 @@ async def staggered_race(
                         if start_next_timer:
                             start_next_timer.cancel()
                             start_next_timer = None
+
+                        # Break out of the task waiting loop to start the next
+                        # task.
                         break
                 else:
                     done = await _wait_one(tasks, loop)
