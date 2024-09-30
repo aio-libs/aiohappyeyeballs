@@ -1,4 +1,9 @@
-"""Tests staggered_race and eager_task_factory with asyncio.Task."""
+"""
+Tests staggered_race and eager_task_factory with asyncio.Task.
+
+These tests are copied from cpython to ensure our implementation is
+compatible with the one in cpython.
+"""
 
 import asyncio
 import sys
