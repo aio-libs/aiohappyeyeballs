@@ -170,13 +170,17 @@ async def staggered_race(
         #  - a winner
         #  - all tasks failed
         #  - a KeyboardInterrupt or SystemExit.
+
         #
-        # If there are any tasks left, cancel them and than
-        # wait them so they fill the exceptions list.
+        # If the timer is still running, cancel it.
         #
         if start_next_timer:
             start_next_timer.cancel()
 
+        #
+        # If there are any tasks left, cancel them and than
+        # wait them so they fill the exceptions list.
+        #
         for task in tasks:
             task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
