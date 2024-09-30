@@ -95,8 +95,8 @@ async def staggered_race(
             raise
         except BaseException as ex:
             exceptions[this_index] = ex
-            if wakeup_next:
-                _set_result_if_not_done(wakeup_next)
+            if wakeup_next and not wakeup_next.done():
+                wakeup_next.set_result(None)
             return None
 
         return result, this_index
