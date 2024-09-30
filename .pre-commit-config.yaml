@@ -41,10 +41,8 @@ repos:
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-      - id: black
+      # Run the formatter.
+      - id: ruff-format
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
