@@ -126,7 +126,6 @@ async def staggered_race(
     start_next_timer: Optional[asyncio.TimerHandle] = None
     start_next: Optional[asyncio.Future[None]]
     task: asyncio.Task[Optional[Tuple[_T, int]]]
-    waiters: Iterable[asyncio.Future[Any]]
     done: Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
     coro_iter = iter(coro_fns)
     this_index = -1
@@ -149,16 +148,17 @@ async def staggered_race(
                     break
 
             while tasks:
-                waiters = [*tasks, start_next] if start_next else tasks
-                done = await _wait_one(waiters, loop)
-
-                if done is start_next:
-                    # The current task has failed or the timer has expired
-                    # so we need to start the next task.
-                    if start_next_timer:
-                        start_next_timer.cancel()
-                        start_next_timer = None
-                    break
+                if start_next:
+                    done = await _wait_one([*tasks, start_next], loop)
+                    if done is start_next:
+                        # The current task has failed or the timer has expired
+                        # so we need to start the next task.
+                        if start_next_timer:
+                            start_next_timer.cancel()
+                            start_next_timer = None
+                        break
+                else:
+                    done = await _wait_one(tasks, loop)
 
                 if TYPE_CHECKING:
                     assert isinstance(done, asyncio.Task)
