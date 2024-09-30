@@ -144,6 +144,8 @@ async def staggered_race(
                         if winner := task.result():
                             return *winner, exceptions
                     finally:
+                        # Make sure the Timer is cancelled if the task is going
+                        # to raise KeyboardInterrupt or SystemExit.
                         if timer:
                             timer.cancel()
 
