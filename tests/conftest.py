@@ -24,7 +24,6 @@ def verify_no_lingering_tasks(
     tasks_before = asyncio.all_tasks(event_loop)
     yield
 
-    event_loop.run_until_complete(event_loop.shutdown_default_executor())
     tasks = asyncio.all_tasks(event_loop) - tasks_before
     for task in tasks:
         pytest.fail(f"Task still running: {task!r}")
