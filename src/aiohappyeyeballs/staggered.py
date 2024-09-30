@@ -23,7 +23,7 @@ def _set_result_if_not_done(fut: asyncio.Future[None]) -> None:
 
 async def staggered_race(
     coro_fns: Iterable[Callable[[], Awaitable[_T]]],
-    delay: float,
+    delay: Optional[float],
     *,
     loop: Optional[asyncio.AbstractEventLoop] = None,
 ) -> Tuple[Optional[_T], Optional[int], List[Optional[BaseException]]]:
