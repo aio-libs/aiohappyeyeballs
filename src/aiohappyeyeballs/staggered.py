@@ -16,7 +16,7 @@ from typing import (
 _T = TypeVar("_T")
 
 
-def _set_result_if_not_done(fut: asyncio.Future[None]) -> None:
+def _set_result_if_not_done(fut: "asyncio.Future[None]") -> None:
     """Set the result of a future if it is not already done."""
     if not fut.done():
         fut.set_result(None)
@@ -88,7 +88,7 @@ async def staggered_race(
     async def run_one_coro(
         coro_fn: Callable[[], Awaitable[_T]],
         this_index: int,
-        wakeup_next: Optional[asyncio.Future[None]],
+        wakeup_next: Optional["asyncio.Future[None]"],
     ) -> Optional[Tuple[_T, int]]:
         try:
             result = await coro_fn()
@@ -96,17 +96,15 @@ async def staggered_race(
             raise
         except BaseException as ex:
             exceptions[this_index] = ex
-            if wakeup_next and not wakeup_next.done():
-                wakeup_next.set_result(None)
+            if wakeup_next:
+                _set_result_if_not_done(wakeup_next)
             return None
 
         return result, this_index
 
     def _on_completion(
-        wait_next: asyncio.Future[
-            Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
-        ],
-        done: Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]],
+        wait_next: "asyncio.Future[Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]]",  # noqa: E501
+        done: Union["asyncio.Future[None]", asyncio.Task[Optional[Tuple[_T, int]]]],
     ) -> None:
         wait_next.set_result(done)
 
