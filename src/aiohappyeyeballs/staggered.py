@@ -165,6 +165,9 @@ async def staggered_race(
                         timer.cancel()
 
     finally:
+        # If there are any tasks left, cancel them
+        # since we either have a winner or a KeyboardInterrupt
+        # or SystemExit.
         for task in tasks:
             task.cancel()
 
