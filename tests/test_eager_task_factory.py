@@ -29,9 +29,12 @@ class EagerTaskFactoryLoopTests(unittest.TestCase):
         self.doCleanups()
 
     def setUp(self):
-        super().setUp()
+        if sys.version_info < (3, 12):
+            self.skipTest("eager_task_factory is only available in Python 3.12+")
+
+        super().setUp()  # type: ignore[unreachable]
         self.loop = asyncio.new_event_loop()
-        self.eager_task_factory = asyncio.create_eager_task_factory(asyncio.Task)  # type: ignore
+        self.eager_task_factory = asyncio.create_eager_task_factory(asyncio.Task)
         self.loop.set_task_factory(self.eager_task_factory)
         self.set_event_loop(self.loop)
 
@@ -58,7 +61,7 @@ class EagerTaskFactoryLoopTests(unittest.TestCase):
             self.assertIsInstance(excs[0], asyncio.CancelledError)
             self.assertIsInstance(excs[2], ValueError)
 
-        self.loop.run_until_complete(run())
+        self.loop.run_until_complete(run())  # type: ignore[has-type]
 
     def test_staggered_race_with_eager_tasks_no_delay(self):
         # See https://github.com/python/cpython/issues/124309
@@ -81,7 +84,7 @@ class EagerTaskFactoryLoopTests(unittest.TestCase):
             self.assertIsInstance(excs[0], ValueError)
             self.assertEqual(len(excs), 2)
 
-        self.loop.run_until_complete(run())
+        self.loop.run_until_complete(run())  # type: ignore[has-type]
 
 
 if __name__ == "__main__":
