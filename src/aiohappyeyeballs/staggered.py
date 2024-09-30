@@ -121,10 +121,7 @@ async def staggered_race(
     try:
         for this_index, coro_fn in enumerate(to_run):
             exceptions.append(None)
-            if this_index == last_index:
-                wakeup_next = loop.create_future()
-            else:
-                wakeup_next = None
+            wakeup_next = None if this_index == last_index else loop.create_future()
 
             tasks.add(loop.create_task(run_one_coro(coro_fn, this_index, wakeup_next)))
             if delay and wakeup_next:
@@ -148,6 +145,8 @@ async def staggered_race(
                         t.remove_done_callback(_on_completion_w_future)
 
                 if done is wakeup_next:
+                    # The current task has failed or the timer has expired
+                    # so we need to start the next task.
                     if timer:
                         timer.cancel()
                     break
