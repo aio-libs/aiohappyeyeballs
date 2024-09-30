@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.4.3 (2024-09-30)
+
+### Fix
+
+- Rewrite staggered_race to be race safe (#101) ([`9db617a`](https://github.com/aio-libs/aiohappyeyeballs/commit/9db617a982ee27994bf13c805f9c4f054f05de47))
+- Re-raise runtimeerror when uvloop raises runtimeerror during connect (#105) ([`c8f1fa9`](https://github.com/aio-libs/aiohappyeyeballs/commit/c8f1fa93d698f216f84de7074a6282777fbf0439))
+
 ## v2.4.2 (2024-09-27)
 
 ### Fix

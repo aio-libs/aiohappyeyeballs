@@ -1,4 +1,4 @@
-__version__ = "2.4.2"
+__version__ = "2.4.3"
 
 from .impl import start_connection
 from .types import AddrInfoType
