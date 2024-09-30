@@ -18,13 +18,8 @@ _T = TypeVar("_T")
 _R = TypeVar("_R")
 
 
-def _set_result(fut: "asyncio.Future[None]") -> None:
+def _set_result(wait_next: "asyncio.Future[_R]", done: _R) -> None:
     """Set the result of a future if it is not already done."""
-    if not fut.done():
-        fut.set_result(None)
-
-
-def _on_completion(wait_next: "asyncio.Future[_R]", done: _R) -> None:
     if not wait_next.done():
         wait_next.set_result(done)
 
@@ -104,7 +99,7 @@ async def staggered_race(
         except BaseException as ex:
             exceptions[this_index] = ex
             if wakeup_next:
-                _set_result(wakeup_next)
+                _set_result(wakeup_next, None)
             return None
 
         return result, this_index
@@ -124,13 +119,15 @@ async def staggered_race(
 
             tasks.add(loop.create_task(run_one_coro(coro_fn, this_index, wakeup_next)))
             if delay and wakeup_next:
-                start_next_timer = loop.call_later(delay, _set_result, wakeup_next)
+                start_next_timer = loop.call_later(
+                    delay, _set_result, wakeup_next, None
+                )
             else:
                 start_next_timer = None
 
             while tasks:
                 wait_next = loop.create_future()
-                _on_completion_w_future = partial(_on_completion, wait_next)
+                _on_completion_w_future = partial(_set_result, wait_next)
 
                 if wakeup_next:
                     wakeup_next.add_done_callback(_on_completion_w_future)
