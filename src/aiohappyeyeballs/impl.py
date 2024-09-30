@@ -8,7 +8,7 @@ import socket
 import sys
 from typing import List, Optional, Sequence
 
-from . import staggered
+from . import _staggered
 from .types import AddrInfoType
 
 if sys.version_info < (3, 8, 2):  # noqa: UP036
@@ -85,7 +85,7 @@ async def start_connection(
             except OSError:
                 continue
     else:  # using happy eyeballs
-        sock, _, _ = await staggered.staggered_race(
+        sock, _, _ = await _staggered.staggered_race(
             (
                 functools.partial(
                     _connect_sock, current_loop, exceptions, addrinfo, local_addr_infos
