@@ -163,7 +163,7 @@ async def staggered_race(
                 if TYPE_CHECKING:
                     assert isinstance(done, asyncio.Task)
 
-                tasks.discard(done)
+                tasks.remove(done)
                 if winner := done.result():
                     return *winner, exceptions
     finally:
