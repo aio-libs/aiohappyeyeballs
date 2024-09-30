@@ -6,7 +6,7 @@ import functools
 import itertools
 import socket
 import sys
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Union
 
 from . import staggered
 from .types import AddrInfoType
@@ -73,7 +73,8 @@ async def start_connection(
         addr_infos = _interleave_addrinfos(addr_infos, interleave)
 
     sock: Optional[socket.socket] = None
-    exceptions: List[List[OSError]] = []
+    # uvloop can raise RuntimeError instead of OSError
+    exceptions: List[List[Union[OSError, RuntimeError]]] = []
     if happy_eyeballs_delay is None or single_addr_info:
         # not using happy eyeballs
         for addrinfo in addr_infos:
@@ -82,7 +83,7 @@ async def start_connection(
                     current_loop, exceptions, addrinfo, local_addr_infos
                 )
                 break
-            except OSError:
+            except (RuntimeError, OSError):
                 continue
     else:  # using happy eyeballs
         sock, _, _ = await staggered.staggered_race(
@@ -113,12 +114,20 @@ async def start_connection(
                 )
                 # If the errno is the same for all exceptions, raise
                 # an OSError with that errno.
-                first_errno = first_exception.errno
-                if all(
-                    isinstance(exc, OSError) and exc.errno == first_errno
-                    for exc in all_exceptions
+                if isinstance(first_exception, OSError):
+                    first_errno = first_exception.errno
+                    if all(
+                        isinstance(exc, OSError) and exc.errno == first_errno
+                        for exc in all_exceptions
+                    ):
+                        raise OSError(first_errno, msg)
+                elif isinstance(first_exception, RuntimeError) and all(
+                    isinstance(exc, RuntimeError) for exc in all_exceptions
                 ):
-                    raise OSError(first_errno, msg)
+                    raise RuntimeError(msg)
+                # We have a mix of OSError and RuntimeError
+                # so we have to pick which one to raise.
+                # and we raise OSError for compatibility
                 raise OSError(msg)
         finally:
             all_exceptions = None  # type: ignore[assignment]
@@ -129,12 +138,12 @@ async def start_connection(
 
 async def _connect_sock(
     loop: asyncio.AbstractEventLoop,
-    exceptions: List[List[OSError]],
+    exceptions: List[List[Union[OSError, RuntimeError]]],
     addr_info: AddrInfoType,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
 ) -> socket.socket:
     """Create, bind and connect one socket."""
-    my_exceptions: list[OSError] = []
+    my_exceptions: List[Union[OSError, RuntimeError]] = []
     exceptions.append(my_exceptions)
     family, type_, proto, _, address = addr_info
     sock = None
@@ -164,7 +173,7 @@ async def _connect_sock(
                     raise OSError(f"no matching local address with {family=} found")
         await loop.sock_connect(sock, address)
         return sock
-    except OSError as exc:
+    except (RuntimeError, OSError) as exc:
         my_exceptions.append(exc)
         if sock is not None:
             sock.close()
