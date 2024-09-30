@@ -96,8 +96,8 @@ async def staggered_race(
             result = await coro_fn()
         except (SystemExit, KeyboardInterrupt):
             raise
-        except BaseException as ex:
-            exceptions[this_index] = ex
+        except BaseException as e:
+            exceptions[this_index] = e
             if wakeup_next:
                 _set_result(wakeup_next, None)
             return None
