@@ -109,7 +109,7 @@ async def staggered_race(
     async def run_one_coro(
         coro_fn: Callable[[], Awaitable[_T]],
         this_index: int,
-        start_next: Optional["asyncio.Future[None]"],
+        start_next: "asyncio.Future[None]",
     ) -> Optional[Tuple[_T, int]]:
         try:
             result = await coro_fn()
@@ -117,8 +117,7 @@ async def staggered_race(
             raise
         except BaseException as e:
             exceptions[this_index] = e
-            if start_next:
-                _set_result(start_next, None)
+            _set_result(start_next, None)
             return None
 
         return result, this_index
@@ -128,18 +127,27 @@ async def staggered_race(
     task: asyncio.Task[Optional[Tuple[_T, int]]]
     waiters: Iterable[asyncio.Future[Any]]
     done: Union[asyncio.Future[None], asyncio.Task[Optional[Tuple[_T, int]]]]
-    to_run = list(coro_fns)
-    last_index = len(to_run) - 1
+    coro_iter = iter(coro_fns)
+    this_index = -1
     try:
-        for this_index, coro_fn in enumerate(to_run):
-            exceptions.append(None)
-            start_next = None if this_index == last_index else loop.create_future()
-
-            tasks.add(loop.create_task(run_one_coro(coro_fn, this_index, start_next)))
-            if delay and start_next:
-                start_next_timer = loop.call_later(delay, _set_result, start_next, None)
+        while True:
+            if coro_fn := next(coro_iter, None):
+                this_index += 1
+                exceptions.append(None)
+                start_next = loop.create_future()
+                tasks.add(
+                    loop.create_task(run_one_coro(coro_fn, this_index, start_next))
+                )
+                if delay:
+                    start_next_timer = loop.call_later(
+                        delay, _set_result, start_next, None
+                    )
+                else:
+                    start_next_timer = None
             else:
-                start_next_timer = None
+                start_next = None
+                if not tasks:
+                    break
 
             while tasks:
                 waiters = [*tasks, start_next] if start_next else tasks
