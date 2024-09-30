@@ -129,7 +129,7 @@ async def staggered_race(
             raise
         except BaseException as e:
             exceptions[this_index] = e
-            _set_result(start_next)
+            _set_result(start_next)  # Kickstart the next coroutine
             return None
 
         return result, this_index
