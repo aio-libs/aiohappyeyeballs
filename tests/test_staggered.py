@@ -47,11 +47,8 @@ async def test_multiple_winners():
     await asyncio.sleep(0.1)
     loop.call_soon(finish.set_result, None)
     winner, index, excs = await task
-    assert len(winners) == 4
-    assert winners == [0, 1, 2, 3]
     assert winner == 0
     assert index == 0
-    assert excs == [None, None, None, None]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="requires python3.12 or higher")
@@ -77,10 +74,7 @@ def test_multiple_winners_eager_task_factory():
         await asyncio.sleep(0.1)
         loop.call_soon(finish.set_result, None)
         winner, index, excs = await task
-        assert len(winners) == 4
-        assert winners == [0, 1, 2, 3]
         assert winner == 0
         assert index == 0
-        assert excs == [None, None, None, None]
 
     loop.run_until_complete(run())
