@@ -178,7 +178,7 @@ async def _connect_sock(
         if sock is not None:
             try:
                 sock.close()
-            except BaseException as e:
+            except OSError as e:
                 my_exceptions.append(e)
                 raise
         raise
@@ -186,7 +186,7 @@ async def _connect_sock(
         if sock is not None:
             try:
                 sock.close()
-            except BaseException as e:
+            except OSError as e:
                 my_exceptions.append(e)
                 raise
         raise
