@@ -1825,3 +1825,46 @@ async def test_cancellation_is_not_swallowed(
 def test_python_38_compat() -> None:
     """Verify python < 3.8.2 compatibility."""
     assert asyncio.futures.TimeoutError is asyncio.TimeoutError  # type: ignore[attr-defined]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "connect_side_effect",
+    [
+        OSError("during connect"),
+        asyncio.CancelledError("during connect"),
+    ],
+)
+@patch_socket
+async def test_single_addr_info_close_errors(
+    m_socket: ModuleType, connect_side_effect: BaseException
+) -> None:
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1),
+    )
+    mock_socket.configure_mock(
+        **{
+            "connect.side_effect": connect_side_effect,
+            "close.side_effect": OSError("during close"),
+        }
+    )
+
+    def _socket(*args, **kw):
+        return mock_socket
+
+    m_socket.socket = _socket  # type: ignore
+
+    addr_info = [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.82", 80),
+        )
+    ]
+    with pytest.raises(OSError, match="during close"):
+        await start_connection(addr_info)

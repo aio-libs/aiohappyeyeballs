@@ -176,11 +176,19 @@ async def _connect_sock(
     except (RuntimeError, OSError) as exc:
         my_exceptions.append(exc)
         if sock is not None:
-            sock.close()
+            try:
+                sock.close()
+            except OSError as e:
+                my_exceptions.append(e)
+                raise
         raise
     except:
         if sock is not None:
-            sock.close()
+            try:
+                sock.close()
+            except OSError as e:
+                my_exceptions.append(e)
+                raise
         raise
     finally:
         exceptions = my_exceptions = None  # type: ignore[assignment]
