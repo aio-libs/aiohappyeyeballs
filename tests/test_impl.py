@@ -1836,10 +1836,12 @@ async def test_single_addr_info_close_errors(m_socket: ModuleType) -> None:
         proto=socket.IPPROTO_TCP,
         fileno=mock.MagicMock(return_value=1),
     )
-    mock_socket.configure_mock(**{
-        'connect.side_effect': asyncio.CancelledError('during connect'),
-        'close.side_effect': OSError('during close')
-    })
+    mock_socket.configure_mock(
+        **{
+            "connect.side_effect": asyncio.CancelledError("during connect"),
+            "close.side_effect": OSError("during close"),
+        }
+    )
 
     def _socket(*args, **kw):
         return mock_socket
