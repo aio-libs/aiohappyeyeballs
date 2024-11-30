@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.4 (2024-11-30)
+
+### Fix
+
+- Handle oserror on failure to close socket instead of raising indexerror (#114) ([`c542f68`](https://github.com/aio-libs/aiohappyeyeballs/commit/c542f684d329fed04093caa2b31d8f7f6e0e0949))
+
 ## v2.4.3 (2024-09-30)
 
 ### Fix
