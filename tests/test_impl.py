@@ -1828,8 +1828,17 @@ def test_python_38_compat() -> None:
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "connect_side_effect",
+    [
+        OSError("during connect"),
+        asyncio.CancelledError("during connect"),
+    ],
+)
 @patch_socket
-async def test_single_addr_info_close_errors(m_socket: ModuleType) -> None:
+async def test_single_addr_info_close_errors(
+    m_socket: ModuleType, connect_side_effect: BaseException
+) -> None:
     mock_socket = mock.MagicMock(
         family=socket.AF_INET,
         type=socket.SOCK_STREAM,
@@ -1838,7 +1847,7 @@ async def test_single_addr_info_close_errors(m_socket: ModuleType) -> None:
     )
     mock_socket.configure_mock(
         **{
-            "connect.side_effect": asyncio.CancelledError("during connect"),
+            "connect.side_effect": connect_side_effect,
             "close.side_effect": OSError("during close"),
         }
     )
@@ -1857,5 +1866,5 @@ async def test_single_addr_info_close_errors(m_socket: ModuleType) -> None:
             ("107.6.106.82", 80),
         )
     ]
-    with pytest.raises(OSError):
+    with pytest.raises(OSError, match="during close"):
         await start_connection(addr_info)
