@@ -48,7 +48,7 @@ sphinx-autobuild = ">=2021.3.14"
 
 
 [tool.poetry.group.test_build.dependencies]
-twine = "^4.0.2"
+twine = ">=4.0.2,<7.0.0"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:tool.poetry.version"]
