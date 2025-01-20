@@ -1,6 +1,5 @@
 import asyncio
 import socket
-import sys
 from types import ModuleType
 from typing import Tuple
 from unittest import mock
@@ -1818,7 +1817,6 @@ async def test_cancellation_is_not_swallowed(
     assert create_calls == [
         ("dead:beef::", 80, 0, 0),
     ]
-
 
 
 @pytest.mark.asyncio
