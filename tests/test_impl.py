@@ -1,6 +1,5 @@
 import asyncio
 import socket
-import sys
 from types import ModuleType
 from typing import Tuple
 from unittest import mock
@@ -1818,13 +1817,6 @@ async def test_cancellation_is_not_swallowed(
     assert create_calls == [
         ("dead:beef::", 80, 0, 0),
     ]
-
-
-@pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info >= (3, 8, 2), reason="requires < python 3.8.2")
-def test_python_38_compat() -> None:
-    """Verify python < 3.8.2 compatibility."""
-    assert asyncio.futures.TimeoutError is asyncio.TimeoutError  # type: ignore[attr-defined]
 
 
 @pytest.mark.asyncio
