@@ -13,7 +13,6 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -31,7 +30,7 @@ packages = [
 "Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.9"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
