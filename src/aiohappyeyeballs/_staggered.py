@@ -151,7 +151,6 @@ async def staggered_race(
                 start_next_timer = (
                     loop.call_later(delay, _set_result, start_next) if delay else None
                 )
-
             elif not tasks:
                 # We exhausted the coro_fns list and no tasks are running
                 # so we have no winner and all coroutines failed.
