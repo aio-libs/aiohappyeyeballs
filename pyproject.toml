@@ -5,15 +5,7 @@ description = "Happy Eyeballs for asyncio"
 authors = [{ name = "J. Nick Koston", email = "nick@koston.org" }]
 readme = "README.md"
 requires-python = ">=3.9"
-dynamic = ["classifiers", "dependencies", "optional-dependencies"]
-
-[project.urls]
-"Repository" = "https://github.com/aio-libs/aiohappyeyeballs"
-"Documentation" = "https://aiohappyeyeballs.readthedocs.io"
-"Bug Tracker" = "https://github.com/aio-libs/aiohappyeyeballs/issues"
-"Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
-
-[tool.poetry]
+dynamic = ["dependencies", "optional-dependencies"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -28,6 +20,14 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Python Software Foundation License"
 ]
+
+[project.urls]
+"Repository" = "https://github.com/aio-libs/aiohappyeyeballs"
+"Documentation" = "https://aiohappyeyeballs.readthedocs.io"
+"Bug Tracker" = "https://github.com/aio-libs/aiohappyeyeballs/issues"
+"Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
+
+[tool.poetry]
 license = "PSF-2.0"
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
