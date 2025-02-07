@@ -5,7 +5,10 @@ import threading
 from typing import Generator
 
 import pytest
-
+from contextlib import contextmanager
+import reprlib
+from asyncio.events import AbstractEventLoop
+from asyncio.events import TimerHandle
 
 @pytest.fixture(autouse=True)
 def verify_threads_ended():
@@ -15,6 +18,24 @@ def verify_threads_ended():
     threads = frozenset(threading.enumerate()) - threads_before
     assert not threads
 
+def get_scheduled_timer_handles(loop: AbstractEventLoop) -> list[TimerHandle]:
+    """Return a list of scheduled TimerHandles."""
+    handles: list[TimerHandle] = loop._scheduled  # type: ignore[attr-defined] # noqa: SLF001
+    return handles
+
+@contextmanager
+def long_repr_strings() -> Generator[None]:
+    """Increase reprlib maxstring and maxother to 300."""
+    arepr = reprlib.aRepr
+    original_maxstring = arepr.maxstring
+    original_maxother = arepr.maxother
+    arepr.maxstring = 300
+    arepr.maxother = 300
+    try:
+        yield
+    finally:
+        arepr.maxstring = original_maxstring
+        arepr.maxother = original_maxother
 
 @pytest.fixture(autouse=True)
 def verify_no_lingering_tasks(
@@ -30,3 +51,9 @@ def verify_no_lingering_tasks(
         task.cancel()
     if tasks:
         event_loop.run_until_complete(asyncio.wait(tasks))
+
+    for handle in get_scheduled_timer_handles(event_loop):
+        if not handle.cancelled():
+            with long_repr_strings():
+                pytest.fail(f"Lingering timer after test {handle!r}")
+                handle.cancel()

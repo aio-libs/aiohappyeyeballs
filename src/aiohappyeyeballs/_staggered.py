@@ -151,15 +151,15 @@ async def staggered_race(
                 start_next_timer = (
                     loop.call_later(delay, _set_result, start_next) if delay else None
                 )
+
             elif not tasks:
                 # We exhausted the coro_fns list and no tasks are running
                 # so we have no winner and all coroutines failed.
                 break
 
-            while tasks:
-                done = await _wait_one(
-                    [*tasks, start_next] if start_next else tasks, loop
-                )
+            while tasks or start_next:
+                wait_on = (*tasks, start_next) if start_next else tasks
+                done = await _wait_one(wait_on, loop)
                 if done is start_next:
                     # The current task has failed or the timer has expired
                     # so we need to start the next task.
