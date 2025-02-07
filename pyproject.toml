@@ -1,18 +1,27 @@
-[tool.poetry]
+[project]
 name = "aiohappyeyeballs"
 version = "2.4.4"
-description = "Happy Eyeballs for asyncio"
-authors = ["J. Nick Koston <nick@koston.org>"]
 license = "PSF-2.0"
+description = "Happy Eyeballs for asyncio"
+authors = [{ name = "J. Nick Koston", email = "nick@koston.org" }]
 readme = "README.md"
-repository = "https://github.com/aio-libs/aiohappyeyeballs"
-documentation = "https://aiohappyeyeballs.readthedocs.io"
+requires-python = ">=3.9"
+dynamic = ["classifiers", "dependencies", "optional-dependencies"]
+
+[project.urls]
+"Repository" = "https://github.com/aio-libs/aiohappyeyeballs"
+"Documentation" = "https://aiohappyeyeballs.readthedocs.io"
+"Bug Tracker" = "https://github.com/aio-libs/aiohappyeyeballs/issues"
+"Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
+
+[tool.poetry]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -24,10 +33,6 @@ packages = [
     { include = "aiohappyeyeballs", from = "src" },
     { include = "tests", format = "sdist" },
 ]
-
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/aio-libs/aiohappyeyeballs/issues"
-"Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
 
 [tool.poetry.dependencies]
 python = ">=3.9"
@@ -51,7 +56,7 @@ sphinx-autobuild = ">=2021.3.14"
 twine = ">=4.0.2,<7.0.0"
 
 [tool.semantic_release]
-version_toml = ["pyproject.toml:tool.poetry.version"]
+version_toml = ["pyproject.toml:project.version"]
 version_variables = [
     "src/aiohappyeyeballs/__init__.py:__version__",
     "docs/conf.py:release",
@@ -154,7 +159,7 @@ module = "docs.*"
 ignore_errors = true
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.codespell]
