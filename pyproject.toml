@@ -1,7 +1,6 @@
 [project]
 name = "aiohappyeyeballs"
 version = "2.4.4"
-license = "PSF-2.0"
 description = "Happy Eyeballs for asyncio"
 authors = [{ name = "J. Nick Koston", email = "nick@koston.org" }]
 readme = "README.md"
@@ -29,6 +28,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Python Software Foundation License"
 ]
+license = "PSF-2.0"
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
     { include = "tests", format = "sdist" },
