@@ -158,8 +158,9 @@ async def staggered_race(
                 break
 
             while tasks or start_next:
-                wait_on = (*tasks, start_next) if start_next else tasks
-                done = await _wait_one(wait_on, loop)
+                done = await _wait_one(
+                    (*tasks, start_next) if start_next else tasks, loop
+                )
                 if done is start_next:
                     # The current task has failed or the timer has expired
                     # so we need to start the next task.

@@ -1,14 +1,14 @@
 """Configuration for the tests."""
 
 import asyncio
+import reprlib
 import threading
+from asyncio.events import AbstractEventLoop, TimerHandle
+from contextlib import contextmanager
 from typing import Generator
 
 import pytest
-from contextlib import contextmanager
-import reprlib
-from asyncio.events import AbstractEventLoop
-from asyncio.events import TimerHandle
+
 
 @pytest.fixture(autouse=True)
 def verify_threads_ended():
@@ -18,10 +18,12 @@ def verify_threads_ended():
     threads = frozenset(threading.enumerate()) - threads_before
     assert not threads
 
+
 def get_scheduled_timer_handles(loop: AbstractEventLoop) -> list[TimerHandle]:
     """Return a list of scheduled TimerHandles."""
-    handles: list[TimerHandle] = loop._scheduled  # type: ignore[attr-defined] # noqa: SLF001
+    handles: list[TimerHandle] = loop._scheduled  # type: ignore[attr-defined]
     return handles
+
 
 @contextmanager
 def long_repr_strings() -> Generator[None]:
@@ -36,6 +38,7 @@ def long_repr_strings() -> Generator[None]:
     finally:
         arepr.maxstring = original_maxstring
         arepr.maxother = original_maxother
+
 
 @pytest.fixture(autouse=True)
 def verify_no_lingering_tasks(
