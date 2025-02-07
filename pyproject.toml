@@ -28,8 +28,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Python Software Foundation License"
 ]
-
-[tool.poetry]
 license = "PSF-2.0"
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
