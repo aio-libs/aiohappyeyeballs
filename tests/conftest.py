@@ -11,7 +11,7 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def verify_threads_ended():
+def verify_threads_ended() -> Generator[None, None, None]:
     """Verify that the threads are not running after the test."""
     threads_before = frozenset(threading.enumerate())
     yield
@@ -26,7 +26,7 @@ def get_scheduled_timer_handles(loop: AbstractEventLoop) -> list[TimerHandle]:
 
 
 @contextmanager
-def long_repr_strings() -> Generator[None]:
+def long_repr_strings() -> Generator[None, None, None]:
     """Increase reprlib maxstring and maxother to 300."""
     arepr = reprlib.aRepr
     original_maxstring = arepr.maxstring
