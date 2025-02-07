@@ -156,9 +156,9 @@ async def staggered_race(
                 # so we have no winner and all coroutines failed.
                 break
 
-            while tasks:
+            while tasks or start_next:
                 done = await _wait_one(
-                    [*tasks, start_next] if start_next else tasks, loop
+                    (*tasks, start_next) if start_next else tasks, loop
                 )
                 if done is start_next:
                     # The current task has failed or the timer has expired
