@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.6 (2025-02-07)
+
+### Bug fixes
+
+- Ensure all timers are cancelled when after staggered race finishes (#136) ([`f75891d`](https://github.com/aio-libs/aiohappyeyeballs/commit/f75891d8974693b24af9789a8981ed7f6bc55c5c))
+
 ## v2.4.5 (2025-02-07)
 
 ### Bug fixes
