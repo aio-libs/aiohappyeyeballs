@@ -6,9 +6,15 @@ compatible with the one in cpython.
 """
 
 import asyncio
+import sys
 import unittest
 
 from aiohappyeyeballs._staggered import staggered_race
+
+if sys.version_info < (3, 11):
+    from async_timeout import timeout
+else:
+    from asyncio import timeout
 
 
 def tearDownModule():
@@ -170,9 +176,7 @@ class StaggeredTests(unittest.IsolatedAsyncioTestCase):
     async def test_cancelled(self):
         log = []
         with self.assertRaises(TimeoutError):
-            async with asyncio.timeout(None) as cs_outer, asyncio.timeout(
-                None
-            ) as cs_inner:
+            async with timeout(None) as cs_outer, timeout(None) as cs_inner:
 
                 async def coro_fn():
                     cs_inner.reschedule(-1)
