@@ -47,6 +47,7 @@ async def staggered_race(
             raise
 
     Args:
+    ----
         coro_fns: an iterable of coroutine functions, i.e. callables that
             return a coroutine object when called. Use ``functools.partial`` or
             lambdas to pass arguments.
@@ -54,9 +55,10 @@ async def staggered_race(
         delay: amount of time, in seconds, between starting coroutines. If
             ``None``, the coroutines will run sequentially.
 
-        loop: the event loop to use.
+        loop: the event loop to use. If ``None``, the running loop is used.
 
     Returns:
+    -------
         tuple *(winner_result, winner_index, exceptions)* where
 
         - *winner_result*: the result of the winning coroutine, or ``None``
