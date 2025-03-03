@@ -7,6 +7,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Set,
     Tuple,
     TypeVar,
     Union,
@@ -77,9 +78,9 @@ async def staggered_race(
     enum_coro_fns = enumerate(coro_fns)
     winner_result: Optional[Any] = None
     winner_index: Union[int, None] = None
-    unhandled_exceptions: list[BaseException] = []
-    exceptions: list[Union[BaseException, None]] = []
-    running_tasks: set[asyncio.Task[Any]] = set()
+    unhandled_exceptions: List[BaseException] = []
+    exceptions: List[Union[BaseException, None]] = []
+    running_tasks: Set[asyncio.Task[Any]] = set()
     on_completed_fut: Union[asyncio.Future[None], None] = None
 
     def task_done(task: asyncio.Task[Any]) -> None:
