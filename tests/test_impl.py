@@ -6,8 +6,7 @@ from unittest import mock
 
 import pytest
 
-from aiohappyeyeballs import AddrInfoType, impl, start_connection
-from aiohappyeyeballs import _staggered, start_connection
+from aiohappyeyeballs import AddrInfoType, _staggered, impl, start_connection
 
 
 def mock_socket_module():
