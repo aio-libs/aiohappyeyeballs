@@ -9,12 +9,9 @@ import asyncio
 import sys
 import unittest
 
-from aiohappyeyeballs._staggered import staggered_race
+import pytest
 
-if sys.version_info < (3, 11):
-    from async_timeout import timeout
-else:
-    from asyncio import timeout
+from aiohappyeyeballs._staggered import staggered_race
 
 
 def tearDownModule():
@@ -173,10 +170,15 @@ class StaggeredTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(excs[1], asyncio.CancelledError)
         self.assertIsInstance(excs[2], asyncio.CancelledError)
 
+    @pytest.mark.skipif(
+        sys.version_info < (3, 11), reason="asyncio.timeout is not available"
+    )
     async def test_cancelled(self):
         log = []
         with self.assertRaises(asyncio.TimeoutError):
-            async with timeout(None) as cs_outer, timeout(None) as cs_inner:
+            async with asyncio.timeout(None) as cs_outer, asyncio.timeout(
+                None
+            ) as cs_inner:
 
                 async def coro_fn():
                     cs_inner.reschedule(-1)
