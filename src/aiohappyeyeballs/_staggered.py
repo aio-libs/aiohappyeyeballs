@@ -15,6 +15,8 @@ from typing import (
 
 _T = TypeVar("_T")
 
+RE_RAISE_EXCEPTIONS = (SystemExit, KeyboardInterrupt)
+
 
 async def staggered_race(
     coro_fns: Iterable[Callable[[], Awaitable[_T]]],
@@ -138,7 +140,7 @@ async def staggered_race(
 
         try:
             result = await coro_fn()
-        except (SystemExit, KeyboardInterrupt):
+        except RE_RAISE_EXCEPTIONS:
             raise
         except BaseException as e:
             exceptions[this_index] = e  # noqa: F821 - defined in the outer scope

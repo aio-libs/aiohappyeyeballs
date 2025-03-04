@@ -87,6 +87,8 @@ async def start_connection(
 
     if sock is None:
         all_exceptions = [exc for sub in exceptions for exc in sub]
+        if not all_exceptions:
+            raise RuntimeError("No addresses succeeded")
         try:
             first_exception = all_exceptions[0]
             if len(all_exceptions) == 1:

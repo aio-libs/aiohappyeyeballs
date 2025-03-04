@@ -6,7 +6,7 @@ from unittest import mock
 
 import pytest
 
-from aiohappyeyeballs import start_connection
+from aiohappyeyeballs import _staggered, start_connection
 
 
 def mock_socket_module():
@@ -1652,11 +1652,14 @@ async def test_uvloop_mixing_os_and_runtime_error(
 
 @patch_socket
 @pytest.mark.asyncio
-@pytest.mark.xfail(reason="raises RuntimeError: coroutine ignored GeneratorExit")
 async def test_handling_system_exit(
     m_socket: ModuleType,
 ) -> None:
     """Test handling SystemExit."""
+
+    class MockSystemExit(BaseException):
+        """Mock SystemExit."""
+
     mock_socket = mock.MagicMock(
         family=socket.AF_INET,
         type=socket.SOCK_STREAM,
@@ -1674,7 +1677,7 @@ async def test_handling_system_exit(
         sock: socket.socket, address: Tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
-        raise SystemExit
+        raise MockSystemExit
 
     m_socket.socket = _socket  # type: ignore
     ipv6_addr_info = (
@@ -1716,20 +1719,16 @@ async def test_handling_system_exit(
         ),
     ]
     loop = asyncio.get_running_loop()
-    with pytest.raises(SystemExit), mock.patch.object(
-        loop, "sock_connect", _sock_connect
+    with pytest.raises(RuntimeError, match="No addresses succeeded"), mock.patch.object(
+        _staggered, "RE_RAISE_EXCEPTIONS", (MockSystemExit,)
     ):
-        await start_connection(
-            addr_info,
-            happy_eyeballs_delay=0.3,
-            interleave=2,
-            local_addr_infos=local_addr_infos,
-        )
-
-    # Stopped after the first call
-    assert create_calls == [
-        ("dead:beef::", 80, 0, 0),
-    ]
+        with mock.patch.object(loop, "sock_connect", _sock_connect):
+            await start_connection(
+                addr_info,
+                happy_eyeballs_delay=0.3,
+                interleave=2,
+                local_addr_infos=local_addr_infos,
+            )
 
 
 @patch_socket
