@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.7 (2025-03-04)
+
+### Bug fixes
+
+- Resolve warnings when running tests (#144) ([`e96264a`](https://github.com/aio-libs/aiohappyeyeballs/commit/e96264aec89b9bd34d37413f610d039c56393a48))
+
 ## v2.4.6 (2025-02-07)
 
 ### Bug fixes
