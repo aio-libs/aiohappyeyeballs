@@ -84,3 +84,4 @@ def test_multiple_winners_eager_task_factory():
         assert excs == [None, None, None, None]
 
     loop.run_until_complete(run())
+    loop.close()

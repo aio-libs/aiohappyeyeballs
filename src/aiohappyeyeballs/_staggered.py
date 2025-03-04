@@ -16,6 +16,8 @@ from typing import (
 
 _T = TypeVar("_T")
 
+RE_RAISE_EXCEPTIONS = (SystemExit, KeyboardInterrupt)
+
 
 def _set_result(wait_next: "asyncio.Future[None]") -> None:
     """Set the result of a future if it is not already done."""
@@ -125,7 +127,7 @@ async def staggered_race(
         """
         try:
             result = await coro_fn()
-        except (SystemExit, KeyboardInterrupt):
+        except RE_RAISE_EXCEPTIONS:
             raise
         except BaseException as e:
             exceptions[this_index] = e
