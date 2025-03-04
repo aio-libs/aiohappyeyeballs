@@ -2,10 +2,11 @@
 
 import asyncio
 import collections
+import contextlib
 import functools
 import itertools
 import socket
-from typing import List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Set, Union
 
 from . import _staggered
 from .types import AddrInfoType
@@ -75,15 +76,36 @@ async def start_connection(
             except (RuntimeError, OSError):
                 continue
     else:  # using happy eyeballs
-        sock, _, _ = await _staggered.staggered_race(
-            (
-                functools.partial(
-                    _connect_sock, current_loop, exceptions, addrinfo, local_addr_infos
-                )
-                for addrinfo in addr_infos
-            ),
-            happy_eyeballs_delay,
-        )
+        open_sockets: Set[socket.socket] = set()
+        try:
+            sock, _, _ = await _staggered.staggered_race(
+                (
+                    functools.partial(
+                        _connect_sock,
+                        current_loop,
+                        exceptions,
+                        addrinfo,
+                        local_addr_infos,
+                        open_sockets,
+                    )
+                    for addrinfo in addr_infos
+                ),
+                happy_eyeballs_delay,
+            )
+        finally:
+            # If we have a winner, staggered_race will
+            # cancel the other tasks, however there is a
+            # small race window where any of the other tasks
+            # can be done before they are cancelled which
+            # will leave the socket open. To avoid this problem
+            # we pass a set to _connect_sock to keep track of
+            # the open sockets and close them here if there
+            # are any "runner up" sockets.
+            for s in open_sockets:
+                if s is not sock:
+                    with contextlib.suppress(OSError):
+                        s.close()
+            open_sockets = None  # type: ignore[assignment]
 
     if sock is None:
         all_exceptions = [exc for sub in exceptions for exc in sub]
@@ -130,6 +152,7 @@ async def _connect_sock(
     exceptions: List[List[Union[OSError, RuntimeError]]],
     addr_info: AddrInfoType,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
+    sockets: Optional[Set[socket.socket]] = None,
 ) -> socket.socket:
     """Create, bind and connect one socket."""
     my_exceptions: List[Union[OSError, RuntimeError]] = []
@@ -138,6 +161,8 @@ async def _connect_sock(
     sock = None
     try:
         sock = socket.socket(family=family, type=type_, proto=proto)
+        if sockets is not None:
+            sockets.add(sock)
         sock.setblocking(False)
         if local_addr_infos is not None:
             for lfamily, _, _, _, laddr in local_addr_infos:
@@ -165,6 +190,8 @@ async def _connect_sock(
     except (RuntimeError, OSError) as exc:
         my_exceptions.append(exc)
         if sock is not None:
+            if sockets is not None:
+                sockets.remove(sock)
             try:
                 sock.close()
             except OSError as e:
@@ -173,6 +200,8 @@ async def _connect_sock(
         raise
     except:
         if sock is not None:
+            if sockets is not None:
+                sockets.remove(sock)
             try:
                 sock.close()
             except OSError as e:
