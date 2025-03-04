@@ -1,12 +1,12 @@
 import asyncio
 import socket
 from types import ModuleType
-from typing import Tuple
+from typing import List, Optional, Sequence, Set, Tuple, Union
 from unittest import mock
 
 import pytest
 
-from aiohappyeyeballs import _staggered, start_connection
+from aiohappyeyeballs import AddrInfoType, _staggered, impl, start_connection
 
 
 def mock_socket_module():
@@ -177,6 +177,75 @@ async def test_multiple_addr_success_second_one(
     loop = asyncio.get_running_loop()
     with mock.patch.object(loop, "sock_connect", return_value=None):
         assert await start_connection(addr_info) == mock_socket
+
+
+@pytest.mark.asyncio
+@patch_socket
+async def test_multiple_winners_cleaned_up(
+    m_socket: ModuleType,
+) -> None:
+    loop = asyncio.get_running_loop()
+    finish = loop.create_future()
+
+    def _socket(*args, **kw):
+        return mock.MagicMock(
+            family=socket.AF_INET,
+            type=socket.SOCK_STREAM,
+            proto=socket.IPPROTO_TCP,
+            fileno=mock.MagicMock(return_value=1),
+        )
+
+    async def _connect_sock(
+        loop: asyncio.AbstractEventLoop,
+        exceptions: List[List[Union[OSError, RuntimeError]]],
+        addr_info: AddrInfoType,
+        local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
+        sockets: Optional[Set[socket.socket]] = None,
+    ) -> socket.socket:
+        await finish
+        sock = _socket()
+        assert sockets is not None
+        sockets.add(sock)
+        return sock
+
+    m_socket.socket = _socket  # type: ignore
+    addr_info = [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.82", 80),
+        ),
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.83", 80),
+        ),
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.84", 80),
+        ),
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.85", 80),
+        ),
+    ]
+    with mock.patch.object(impl, "_connect_sock", _connect_sock):
+        task = loop.create_task(
+            start_connection(addr_info, happy_eyeballs_delay=0.0001, interleave=0)
+        )
+        await asyncio.sleep(0.1)
+        loop.call_soon(finish.set_result, None)
+        await task
 
 
 @pytest.mark.asyncio
