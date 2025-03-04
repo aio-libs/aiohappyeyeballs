@@ -178,7 +178,7 @@ async def staggered_race(
             except asyncio.CancelledError as ex:
                 propagate_cancellation_error = ex
                 for task in running_tasks:
-                    task.cancel(*ex.args)
+                    task.cancel()
             on_completed_fut = None
         if propagate_cancellation_error is not None:
             raise propagate_cancellation_error
