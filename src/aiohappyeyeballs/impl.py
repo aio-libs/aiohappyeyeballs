@@ -152,17 +152,26 @@ async def _connect_sock(
     exceptions: List[List[Union[OSError, RuntimeError]]],
     addr_info: AddrInfoType,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
-    sockets: Optional[Set[socket.socket]] = None,
+    open_sockets: Optional[Set[socket.socket]] = None,
 ) -> socket.socket:
-    """Create, bind and connect one socket."""
+    """
+    Create, bind and connect one socket.
+
+    If open_sockets is passed, add the socket to the set of open sockets.
+    Any failure caught here will remove the socket from the set and close it.
+
+    Callers can use this set to close any sockets that are not the winner
+    of all staggered tasks in the result there are runner up sockets aka
+    multiple winners.
+    """
     my_exceptions: List[Union[OSError, RuntimeError]] = []
     exceptions.append(my_exceptions)
     family, type_, proto, _, address = addr_info
     sock = None
     try:
         sock = socket.socket(family=family, type=type_, proto=proto)
-        if sockets is not None:
-            sockets.add(sock)
+        if open_sockets is not None:
+            open_sockets.add(sock)
         sock.setblocking(False)
         if local_addr_infos is not None:
             for lfamily, _, _, _, laddr in local_addr_infos:
@@ -190,8 +199,8 @@ async def _connect_sock(
     except (RuntimeError, OSError) as exc:
         my_exceptions.append(exc)
         if sock is not None:
-            if sockets is not None:
-                sockets.remove(sock)
+            if open_sockets is not None:
+                open_sockets.remove(sock)
             try:
                 sock.close()
             except OSError as e:
@@ -200,8 +209,8 @@ async def _connect_sock(
         raise
     except:
         if sock is not None:
-            if sockets is not None:
-                sockets.remove(sock)
+            if open_sockets is not None:
+                open_sockets.remove(sock)
             try:
                 sock.close()
             except OSError as e:
