@@ -1,6 +1,6 @@
 [project]
 name = "aiohappyeyeballs"
-version = "2.4.7"
+version = "2.4.8"
 description = "Happy Eyeballs for asyncio"
 authors = [{ name = "J. Nick Koston", email = "nick@koston.org" }]
 readme = "README.md"

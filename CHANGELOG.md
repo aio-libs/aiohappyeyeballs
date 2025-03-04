@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.8 (2025-03-04)
+
+### Bug fixes
+
+- Close runner up sockets in the event there are multiple winners (#143) ([`476a05b`](https://github.com/aio-libs/aiohappyeyeballs/commit/476a05b956627700baa84eb6aac28c395da92a9f))
+
 ## v2.4.7 (2025-03-04)
 
 ### Bug fixes
