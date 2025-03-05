@@ -6,7 +6,13 @@ from unittest import mock
 
 import pytest
 
-from aiohappyeyeballs import AddrInfoType, _staggered, impl, start_connection
+from aiohappyeyeballs import (
+    AddrInfoType,
+    SocketFactoryType,
+    _staggered,
+    impl,
+    start_connection,
+)
 
 
 def mock_socket_module():
@@ -138,6 +144,33 @@ async def test_single_addr_success_passing_loop(m_socket: ModuleType) -> None:
 
 @pytest.mark.asyncio
 @patch_socket
+async def test_single_addr_socket_factory(m_socket: ModuleType) -> None:
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1),
+    )
+
+    def factory(addr_info: AddrInfoType) -> socket.socket:
+        return mock_socket
+
+    addr_info = [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.82", 80),
+        )
+    ]
+    loop = asyncio.get_running_loop()
+    with mock.patch.object(loop, "sock_connect", return_value=None):
+        assert await start_connection(addr_info, socket_factory=factory) == mock_socket
+
+
+@pytest.mark.asyncio
+@patch_socket
 async def test_multiple_addr_success_second_one(
     m_socket: ModuleType,
 ) -> None:
@@ -201,6 +234,7 @@ async def test_multiple_winners_cleaned_up(
         addr_info: AddrInfoType,
         local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
         sockets: Optional[Set[socket.socket]] = None,
+        socket_factory: Optional[SocketFactoryType] = None,
     ) -> socket.socket:
         await finish
         sock = _socket()
@@ -290,6 +324,54 @@ async def test_multiple_addr_success_second_one_happy_eyeballs(
     with mock.patch.object(loop, "sock_connect", return_value=None):
         assert (
             await start_connection(addr_info, happy_eyeballs_delay=0.3) == mock_socket
+        )
+
+
+@pytest.mark.asyncio
+@patch_socket
+async def test_happy_eyeballs_socket_factory(
+    m_socket: ModuleType,
+) -> None:
+    mock_socket = mock.MagicMock(
+        family=socket.AF_INET,
+        type=socket.SOCK_STREAM,
+        proto=socket.IPPROTO_TCP,
+        fileno=mock.MagicMock(return_value=1),
+    )
+
+    idx = -1
+    errors = ["err1", "err2"]
+
+    def factory(addr_info: AddrInfoType) -> socket.socket:
+        nonlocal idx, errors
+        idx += 1
+        if idx == 1:
+            raise OSError(5, errors[idx])
+        return mock_socket
+
+    addr_info = [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.82", 80),
+        ),
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.83", 80),
+        ),
+    ]
+    loop = asyncio.get_running_loop()
+    with mock.patch.object(loop, "sock_connect", return_value=None):
+        assert (
+            await start_connection(
+                addr_info, happy_eyeballs_delay=0.3, socket_factory=factory
+            )
+            == mock_socket
         )
 
 

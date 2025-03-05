@@ -1,6 +1,7 @@
 """Types for aiohappyeyeballs."""
 
 import socket
+from collections.abc import Callable
 from typing import Tuple, Union
 
 AddrInfoType = Tuple[
@@ -10,3 +11,5 @@ AddrInfoType = Tuple[
     str,
     Tuple,  # type: ignore[type-arg]
 ]
+
+SocketFactoryType = Callable[[AddrInfoType], socket.socket]
