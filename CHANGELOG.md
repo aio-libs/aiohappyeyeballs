@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.5.0 (2025-03-06)
+
+### Features
+
+- Add callback for users to customize socket creation (#147) ([`8e1bc6a`](https://github.com/aio-libs/aiohappyeyeballs/commit/8e1bc6a4bc6282ccf29db441c33dd8d806003ffd))
+
 ## v2.4.8 (2025-03-04)
 
 ### Bug fixes
