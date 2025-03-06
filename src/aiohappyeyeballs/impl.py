@@ -9,7 +9,7 @@ import socket
 from typing import List, Optional, Sequence, Set, Union
 
 from . import _staggered
-from .types import AddrInfoType
+from .types import AddrInfoType, SocketFactoryType
 
 
 async def start_connection(
@@ -19,6 +19,7 @@ async def start_connection(
     happy_eyeballs_delay: Optional[float] = None,
     interleave: Optional[int] = None,
     loop: Optional[asyncio.AbstractEventLoop] = None,
+    socket_factory: Optional[SocketFactoryType] = None,
 ) -> socket.socket:
     """
     Connect to a TCP server.
@@ -70,7 +71,12 @@ async def start_connection(
         for addrinfo in addr_infos:
             try:
                 sock = await _connect_sock(
-                    current_loop, exceptions, addrinfo, local_addr_infos
+                    current_loop,
+                    exceptions,
+                    addrinfo,
+                    local_addr_infos,
+                    None,
+                    socket_factory,
                 )
                 break
             except (RuntimeError, OSError):
@@ -87,6 +93,7 @@ async def start_connection(
                         addrinfo,
                         local_addr_infos,
                         open_sockets,
+                        socket_factory,
                     )
                     for addrinfo in addr_infos
                 ),
@@ -153,6 +160,7 @@ async def _connect_sock(
     addr_info: AddrInfoType,
     local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
     open_sockets: Optional[Set[socket.socket]] = None,
+    socket_factory: Optional[SocketFactoryType] = None,
 ) -> socket.socket:
     """
     Create, bind and connect one socket.
@@ -169,7 +177,10 @@ async def _connect_sock(
     family, type_, proto, _, address = addr_info
     sock = None
     try:
-        sock = socket.socket(family=family, type=type_, proto=proto)
+        if socket_factory is not None:
+            sock = socket_factory(addr_info)
+        else:
+            sock = socket.socket(family=family, type=type_, proto=proto)
         if open_sockets is not None:
             open_sockets.add(sock)
         sock.setblocking(False)
