@@ -4,6 +4,7 @@
 :caption: Installation & Usage
 :maxdepth: 2
 
+api_reference
 installation
 usage
 ```
