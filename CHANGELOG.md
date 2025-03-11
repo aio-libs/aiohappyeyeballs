@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.6.0 (2025-03-11)
+
+### Features
+
+- Publish documentation (#149) ([`4235273`](https://github.com/aio-libs/aiohappyeyeballs/commit/42352736d12c60d500c63b9598ffab05ef5e8829))
+
 ## v2.5.0 (2025-03-06)
 
 ### Features
