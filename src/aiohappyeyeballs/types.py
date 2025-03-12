@@ -1,8 +1,10 @@
 """Types for aiohappyeyeballs."""
 
 import socket
-from collections.abc import Callable
-from typing import Tuple, Union
+
+# PY3.9: Import Callable from typing until we drop Python 3.9 support
+# https://github.com/python/cpython/issues/87131
+from typing import Callable, Tuple, Union
 
 AddrInfoType = Tuple[
     Union[int, socket.AddressFamily],
