@@ -36,7 +36,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "3.9.1" # https://github.com/aio-libs/aiohappyeyeballs/issues/150
           - "3.9"
           - "3.10"
           - "3.11"
@@ -49,6 +48,9 @@ jobs:
         exclude:
           - os: macOS-latest
             python-version: "3.8.0"
+        include:
+          - os: ubuntu-20.04
+            python-version: "3.9.1" # https://github.com/aio-libs/aiohappyeyeballs/issues/150
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
