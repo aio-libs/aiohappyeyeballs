@@ -1,10 +1,12 @@
 import asyncio
 import sys
+from collections.abc import Callable as CallableABC
 from functools import partial
+from typing import Callable as CallableTyping
 
 import pytest
 
-from aiohappyeyeballs._staggered import staggered_race
+from aiohappyeyeballs._staggered import Callable, staggered_race
 
 
 @pytest.mark.asyncio
@@ -85,3 +87,15 @@ def test_multiple_winners_eager_task_factory():
 
     loop.run_until_complete(run())
     loop.close()
+
+
+def test_callable_import_from_typing():
+    """
+    Test that Callable is imported from typing.
+
+    PY3.9: https://github.com/python/cpython/issues/87131
+
+    Drop this test when we drop support for Python 3.9.
+    """
+    assert Callable is CallableTyping
+    assert Callable is not CallableABC
