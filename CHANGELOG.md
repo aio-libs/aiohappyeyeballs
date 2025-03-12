@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.6.1 (2025-03-12)
+
+### Bug fixes
+
+- Resolve typeerror on import for python < 3.9.2 (#151) ([`2042c82`](https://github.com/aio-libs/aiohappyeyeballs/commit/2042c82f9978f41c31b58aa4e3d8fc3b9c3ec2ec))
+
 ## v2.6.0 (2025-03-11)
 
 ### Features
