@@ -28,6 +28,10 @@ classifiers = [
 "Changelog" = "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md"
 
 [tool.poetry]
+name = "aiohappyeyeballs"
+version = "2.6.1"
+description = "Happy Eyeballs for asyncio"
+authors = ["J. Nick Koston <nick@koston.org>"]
 license = "PSF-2.0"
 packages = [
     { include = "aiohappyeyeballs", from = "src" },
