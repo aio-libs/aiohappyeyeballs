@@ -9,7 +9,7 @@ import pytest
 try:
     import uvloop
 except ImportError:
-    pytest.mark.skip("uvloop is not installed")
+    pytestmark = pytest.mark.skip("uvloop is not installed")
 
 
 from aiohappyeyeballs import (
