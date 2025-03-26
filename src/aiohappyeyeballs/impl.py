@@ -13,6 +13,10 @@ from .types import AddrInfoType, SocketFactoryType
 
 
 def _close_socket(sock: socket.socket) -> None:
+    # There is no guarantee that writer has been removed
+    # yet so we need to use a call_soon to close the socket
+    # to prevent something else from reusing it.
+    # https://github.com/python/cpython/issues/131728
     with contextlib.suppress(OSError):
         sock.close()
 
