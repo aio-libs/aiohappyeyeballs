@@ -5,7 +5,12 @@ from typing import Tuple
 from unittest import mock
 
 import pytest
-import uvloop
+
+try:
+    import uvloop
+except ImportError:
+    pytest.mark.skip("uvloop is not installed")
+
 
 from aiohappyeyeballs import (
     start_connection,
