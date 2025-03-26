@@ -12,6 +12,11 @@ from . import _staggered
 from .types import AddrInfoType, SocketFactoryType
 
 
+def _close_socket(sock: socket.socket) -> None:
+    with contextlib.suppress(OSError):
+        sock.close()
+
+
 async def start_connection(
     addr_infos: Sequence[AddrInfoType],
     *,
@@ -110,8 +115,15 @@ async def start_connection(
             # are any "runner up" sockets.
             for s in open_sockets:
                 if s is not sock:
-                    with contextlib.suppress(OSError):
-                        s.close()
+                    if isinstance(loop, asyncio.SelectorEventLoop):
+                        # There is no guarantee that writer has been removed
+                        # yet so we need to use a call_soon to close the socket
+                        # to prevent something else from reusing it.
+                        # https://github.com/python/cpython/issues/131728
+                        current_loop.call_soon(_close_socket, s)
+                    else:
+                        with contextlib.suppress(OSError):
+                            s.close()
             open_sockets = None  # type: ignore[assignment]
 
     if sock is None:
@@ -222,11 +234,18 @@ async def _connect_sock(
         if sock is not None:
             if open_sockets is not None:
                 open_sockets.remove(sock)
-            try:
-                sock.close()
-            except OSError as e:
-                my_exceptions.append(e)
-                raise
+            if isinstance(loop, asyncio.SelectorEventLoop):
+                # There is no guarantee that writer has been removed
+                # yet so we need to use a call_soon to close the socket
+                # to prevent something else from reusing it.
+                # https://github.com/python/cpython/issues/131728
+                loop.call_soon(_close_socket, sock)
+            else:
+                try:
+                    sock.close()
+                except OSError as e:
+                    my_exceptions.append(e)
+                    raise
         raise
     finally:
         exceptions = my_exceptions = None  # type: ignore[assignment]

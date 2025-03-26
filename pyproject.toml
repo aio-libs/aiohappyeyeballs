@@ -41,6 +41,7 @@ python = ">=3.9"
 pytest = ">=7,<9"
 pytest-cov = ">=3,<7"
 pytest-asyncio = ">=0.23.2,<0.26.0"
+uvloop = "^0.21.0"
 
 [tool.poetry.group.docs]
 optional = true

@@ -2,12 +2,57 @@
 
 import asyncio
 import reprlib
+import socket
 import threading
 from asyncio.events import AbstractEventLoop, TimerHandle
 from contextlib import contextmanager
 from typing import Generator
+from unittest import mock
 
 import pytest
+
+
+def mock_nonblocking_socket(
+    proto=socket.IPPROTO_TCP, type=socket.SOCK_STREAM, family=socket.AF_INET
+):
+    """Create a mock of a non-blocking socket."""
+    sock = mock.create_autospec(socket.socket, spec_set=True, instance=True)
+    sock.proto = proto
+    sock.type = type
+    sock.family = family
+    sock.gettimeout.return_value = 0.0
+    return sock
+
+
+def mock_socket_module():
+    m_socket = mock.MagicMock(spec=socket)
+    for name in (
+        "AF_INET",
+        "AF_INET6",
+        "AF_UNSPEC",
+        "IPPROTO_TCP",
+        "IPPROTO_UDP",
+        "SOCK_STREAM",
+        "SOCK_DGRAM",
+        "SOL_SOCKET",
+        "SO_REUSEADDR",
+        "inet_pton",
+    ):
+        if hasattr(socket, name):
+            setattr(m_socket, name, getattr(socket, name))
+        else:
+            delattr(m_socket, name)
+
+    m_socket.socket = mock.MagicMock()
+    m_socket.socket.return_value = mock_nonblocking_socket()
+
+    return m_socket
+
+
+def patch_socket(f):
+    return mock.patch("aiohappyeyeballs.impl.socket", new_callable=mock_socket_module)(
+        f
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -21,7 +66,9 @@ def verify_threads_ended() -> Generator[None, None, None]:
 
 def get_scheduled_timer_handles(loop: AbstractEventLoop) -> list[TimerHandle]:
     """Return a list of scheduled TimerHandles."""
-    handles: list[TimerHandle] = loop._scheduled  # type: ignore[attr-defined]
+    if not hasattr(loop, "_scheduled"):
+        return []
+    handles: list[TimerHandle] = loop._scheduled
     return handles
 
 
