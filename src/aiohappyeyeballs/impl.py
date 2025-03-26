@@ -115,7 +115,7 @@ async def start_connection(
             # are any "runner up" sockets.
             for s in open_sockets:
                 if s is not sock:
-                    if isinstance(loop, asyncio.SelectorEventLoop):
+                    if isinstance(current_loop, asyncio.SelectorEventLoop):
                         # There is no guarantee that writer has been removed
                         # yet so we need to use a call_soon to close the socket
                         # to prevent something else from reusing it.
