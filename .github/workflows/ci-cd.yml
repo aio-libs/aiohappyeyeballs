@@ -47,7 +47,7 @@ jobs:
           - macOS-latest
         include:
           # https://github.com/aio-libs/aiohappyeyeballs/issues/150
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             python-version: "3.9.1"
     runs-on: ${{ matrix.os }}
     steps:
