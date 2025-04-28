@@ -45,10 +45,6 @@ jobs:
           - ubuntu-latest
           - windows-latest
           - macOS-latest
-        include:
-          # https://github.com/aio-libs/aiohappyeyeballs/issues/150
-          - os: ubuntu-22.04
-            python-version: "3.9.1"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
