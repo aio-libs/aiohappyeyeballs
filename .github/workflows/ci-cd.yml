@@ -86,7 +86,7 @@ jobs:
       - name: Test release
         uses: python-semantic-release/python-semantic-release@v10.2.0
         with:
-          root_options: --noop
+          no_operation_mode: true
 
       - uses: snok/install-poetry@v1.4.1
       - name: Install Dependencies
