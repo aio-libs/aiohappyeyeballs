@@ -41,10 +41,13 @@ def long_repr_strings() -> Generator[None, None, None]:
 
 
 @pytest.fixture(autouse=True)
-def verify_no_lingering_tasks(
-    event_loop: asyncio.AbstractEventLoop,
-) -> Generator[None, None, None]:
+def verify_no_lingering_tasks() -> Generator[None, None, None]:
     """Verify that all tasks are cleaned up."""
+    try:
+        event_loop = asyncio.get_event_loop()
+    except RuntimeError:
+        yield
+        return
     tasks_before = asyncio.all_tasks(event_loop)
     yield
 
