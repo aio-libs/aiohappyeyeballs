@@ -133,7 +133,7 @@ class StaggeredTests(unittest.IsolatedAsyncioTestCase):
             return "coro"
 
         async def main():
-            winner, index, excs = await staggered_race([coro], delay=0.1, loop=loop)
+            winner, index, _excs = await staggered_race([coro], delay=0.1, loop=loop)
 
             self.assertEqual(winner, "coro")
             self.assertEqual(index, 0)
