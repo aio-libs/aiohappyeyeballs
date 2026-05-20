@@ -128,7 +128,7 @@ version = "2025.1.31"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.6"
-groups = ["docs", "test-build"]
+groups = ["dev", "docs", "test-build"]
 files = [
     {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
     {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
@@ -140,8 +140,8 @@ version = "2.0.0"
 description = "Foreign Function Interface for Python calling C code."
 optional = false
 python-versions = ">=3.9"
-groups = ["dev", "test-build"]
-markers = "platform_python_implementation != \"PyPy\""
+groups = ["test-build"]
+markers = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and sys_platform == \"linux\" and platform_python_implementation != \"PyPy\""
 files = [
     {file = "cffi-2.0.0-cp310-cp310-macosx_10_13_x86_64.whl", hash = "sha256:0cf2d91ecc3fcc0625c2c530fe004f82c110405f101548512cce44322fa8ac44"},
     {file = "cffi-2.0.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:f73b96c41e3b2adedc34a7356e64c8eb96e03a3782b535e043a986276ce12a49"},
@@ -238,7 +238,7 @@ version = "3.4.1"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
 optional = false
 python-versions = ">=3.7"
-groups = ["docs", "test-build"]
+groups = ["dev", "docs", "test-build"]
 files = [
     {file = "charset_normalizer-3.4.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:91b36a978b5ae0ee86c394f5a54d6ef44db1de0815eb43de826d41d21e4af3de"},
     {file = "charset_normalizer-3.4.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7461baadb4dc00fd9e0acbe254e3d7d2112e7f92ced2adc96e54ef6501c5f176"},
@@ -472,7 +472,8 @@ version = "46.0.7"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 optional = false
 python-versions = "!=3.9.0,!=3.9.1,>=3.8"
-groups = ["dev", "test-build"]
+groups = ["test-build"]
+markers = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and sys_platform == \"linux\""
 files = [
     {file = "cryptography-46.0.7-cp311-abi3-macosx_10_9_universal2.whl", hash = "sha256:ea42cbe97209df307fdc3b155f1b6fa2577c0defa8f1f7d3be7d31d189108ad4"},
     {file = "cryptography-46.0.7-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:b36a4695e29fe69215d75960b22577197aca3f7a25b9cf9d165dcfe9d80bc325"},
@@ -624,7 +625,7 @@ version = "3.15"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
 python-versions = ">=3.8"
-groups = ["docs", "test-build"]
+groups = ["dev", "docs", "test-build"]
 files = [
     {file = "idna-3.15-py3-none-any.whl", hash = "sha256:048adeaf8c2d788c40fee287673ccaa74c24ffd8dcf09ffa555a2fbb59f10ac8"},
     {file = "idna-3.15.tar.gz", hash = "sha256:ca962446ea538f7092a95e057da437618e886f4d349216d2b1e294abfdb65fdc"},
@@ -1048,8 +1049,8 @@ version = "2.22"
 description = "C parser in Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev", "test-build"]
-markers = "platform_python_implementation != \"PyPy\" and implementation_name != \"PyPy\""
+groups = ["test-build"]
+markers = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and sys_platform == \"linux\" and platform_python_implementation != \"PyPy\" and implementation_name != \"PyPy\""
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
     {file = "pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"},
@@ -1233,25 +1234,26 @@ md = ["cmarkgfm (>=0.8.0)"]
 
 [[package]]
 name = "requests"
-version = "2.32.4"
+version = "2.33.0"
 description = "Python HTTP for Humans."
 optional = false
-python-versions = ">=3.8"
-groups = ["docs", "test-build"]
+python-versions = ">=3.10"
+groups = ["dev", "docs", "test-build"]
 files = [
-    {file = "requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c"},
-    {file = "requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"},
+    {file = "requests-2.33.0-py3-none-any.whl", hash = "sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b"},
+    {file = "requests-2.33.0.tar.gz", hash = "sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652"},
 ]
 
 [package.dependencies]
-certifi = ">=2017.4.17"
+certifi = ">=2023.5.7"
 charset_normalizer = ">=2,<4"
 idna = ">=2.5,<4"
-urllib3 = ">=1.21.1,<3"
+urllib3 = ">=1.26,<3"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+test = ["PySocks (>=1.5.6,!=1.5.7)", "pytest (>=3)", "pytest-cov", "pytest-httpbin (==2.1.0)", "pytest-mock", "pytest-xdist"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<8)"]
 
 [[package]]
 name = "requests-toolbelt"
