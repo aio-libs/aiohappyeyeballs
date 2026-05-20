@@ -6,7 +6,7 @@ import contextlib
 import functools
 import itertools
 import socket
-from typing import List, Optional, Sequence, Set, Union
+from collections.abc import Sequence
 
 from . import _staggered
 from .types import AddrInfoType, SocketFactoryType
@@ -15,11 +15,11 @@ from .types import AddrInfoType, SocketFactoryType
 async def start_connection(
     addr_infos: Sequence[AddrInfoType],
     *,
-    local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
-    happy_eyeballs_delay: Optional[float] = None,
-    interleave: Optional[int] = None,
-    loop: Optional[asyncio.AbstractEventLoop] = None,
-    socket_factory: Optional[SocketFactoryType] = None,
+    local_addr_infos: Sequence[AddrInfoType] | None = None,
+    happy_eyeballs_delay: float | None = None,
+    interleave: int | None = None,
+    loop: asyncio.AbstractEventLoop | None = None,
+    socket_factory: SocketFactoryType | None = None,
 ) -> socket.socket:
     """
     Connect to a TCP server.
@@ -62,9 +62,9 @@ async def start_connection(
     if interleave and not single_addr_info:
         addr_infos = _interleave_addrinfos(addr_infos, interleave)
 
-    sock: Optional[socket.socket] = None
+    sock: socket.socket | None = None
     # uvloop can raise RuntimeError instead of OSError
-    exceptions: List[List[Union[OSError, RuntimeError]]] = []
+    exceptions: list[list[OSError | RuntimeError]] = []
     if happy_eyeballs_delay is None or single_addr_info:
         # not using happy eyeballs
         for addrinfo in addr_infos:
@@ -81,7 +81,7 @@ async def start_connection(
             except (RuntimeError, OSError):
                 continue
     else:  # using happy eyeballs
-        open_sockets: Set[socket.socket] = set()
+        open_sockets: set[socket.socket] = set()
         try:
             sock, _, _ = await _staggered.staggered_race(
                 (
@@ -155,11 +155,11 @@ async def start_connection(
 
 async def _connect_sock(
     loop: asyncio.AbstractEventLoop,
-    exceptions: List[List[Union[OSError, RuntimeError]]],
+    exceptions: list[list[OSError | RuntimeError]],
     addr_info: AddrInfoType,
-    local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
-    open_sockets: Optional[Set[socket.socket]] = None,
-    socket_factory: Optional[SocketFactoryType] = None,
+    local_addr_infos: Sequence[AddrInfoType] | None = None,
+    open_sockets: set[socket.socket] | None = None,
+    socket_factory: SocketFactoryType | None = None,
 ) -> socket.socket:
     """
     Create, bind and connect one socket.
@@ -171,7 +171,7 @@ async def _connect_sock(
     of all staggered tasks in the result there are runner up sockets aka
     multiple winners.
     """
-    my_exceptions: List[Union[OSError, RuntimeError]] = []
+    my_exceptions: list[OSError | RuntimeError] = []
     exceptions.append(my_exceptions)
     family, type_, proto, _, address = addr_info
     sock = None
@@ -233,10 +233,10 @@ async def _connect_sock(
 
 def _interleave_addrinfos(
     addrinfos: Sequence[AddrInfoType], first_address_family_count: int = 1
-) -> List[AddrInfoType]:
+) -> list[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
-    addrinfos_by_family: collections.OrderedDict[int, List[AddrInfoType]] = (
+    addrinfos_by_family: collections.OrderedDict[int, list[AddrInfoType]] = (
         collections.OrderedDict()
     )
     for addr in addrinfos:
@@ -246,7 +246,7 @@ def _interleave_addrinfos(
         addrinfos_by_family[family].append(addr)
     addrinfos_lists = list(addrinfos_by_family.values())
 
-    reordered: List[AddrInfoType] = []
+    reordered: list[AddrInfoType] = []
     if first_address_family_count > 1:
         reordered.extend(addrinfos_lists[0][: first_address_family_count - 1])
         del addrinfos_lists[0][: first_address_family_count - 1]

@@ -1,7 +1,7 @@
 import asyncio
 import socket
+from collections.abc import Sequence
 from types import ModuleType
-from typing import List, Optional, Sequence, Set, Tuple, Union
 from unittest import mock
 
 import pytest
@@ -230,11 +230,11 @@ async def test_multiple_winners_cleaned_up(
 
     async def _connect_sock(
         loop: asyncio.AbstractEventLoop,
-        exceptions: List[List[Union[OSError, RuntimeError]]],
+        exceptions: list[list[OSError | RuntimeError]],
         addr_info: AddrInfoType,
-        local_addr_infos: Optional[Sequence[AddrInfoType]] = None,
-        sockets: Optional[Set[socket.socket]] = None,
-        socket_factory: Optional[SocketFactoryType] = None,
+        local_addr_infos: Sequence[AddrInfoType] | None = None,
+        sockets: set[socket.socket] | None = None,
+        socket_factory: SocketFactoryType | None = None,
     ) -> socket.socket:
         await finish
         sock = _socket()
@@ -479,16 +479,16 @@ async def test_ipv6_and_ipv4_happy_eyeballs_ipv4_fails(
         return mock_socket
 
     m_socket.socket = _socket  # type: ignore
-    ipv6_addr: Tuple[str, int, int, int] = ("dead:beef::", 80, 0, 0)
-    ipv6_addr_info: Tuple[int, int, int, str, Tuple[str, int, int, int]] = (
+    ipv6_addr: tuple[str, int, int, int] = ("dead:beef::", 80, 0, 0)
+    ipv6_addr_info: tuple[int, int, int, str, tuple[str, int, int, int]] = (
         socket.AF_INET6,
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP,
         "",
         ipv6_addr,
     )
-    ipv4_addr: Tuple[str, int] = ("107.6.106.83", 80)
-    ipv4_addr_info: Tuple[int, int, int, str, Tuple[str, int]] = (
+    ipv4_addr: tuple[str, int] = ("107.6.106.83", 80)
+    ipv4_addr_info: tuple[int, int, int, str, tuple[str, int]] = (
         socket.AF_INET,
         socket.SOCK_STREAM,
         socket.IPPROTO_TCP,
@@ -523,7 +523,7 @@ async def test_ipv6_and_ipv4_happy_eyeballs_first_ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -584,7 +584,7 @@ async def test_ipv64_happy_eyeballs_interleave_2_first_ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -647,7 +647,7 @@ async def test_ipv6_only_happy_eyeballs_first_ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -701,7 +701,7 @@ async def test_ipv64_laddr_eyeballs_interleave_2_first_ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -778,7 +778,7 @@ async def test_ipv64_laddr_both__eyeballs_first_ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -863,7 +863,7 @@ async def test_ipv64_laddr_bind_fails_eyeballs_first_ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -911,8 +911,9 @@ async def test_ipv64_laddr_bind_fails_eyeballs_first_ipv6_fails(
         ),
     ]
     loop = asyncio.get_running_loop()
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        OSError, match="ipv6 fail"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(OSError, match="ipv6 fail"),
     ):
         assert (
             await start_connection(
@@ -950,7 +951,7 @@ async def test_ipv64_laddr_bind_fails_eyeballs_interleave_first__ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -1032,7 +1033,7 @@ async def test_ipv64_laddr_socket_fails(
         raise Exception("Something really went wrong")
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -1080,8 +1081,9 @@ async def test_ipv64_laddr_socket_fails(
         ),
     ]
     loop = asyncio.get_running_loop()
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        Exception, match="Something really went wrong"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(Exception, match="Something really went wrong"),
     ):
         assert (
             await start_connection(
@@ -1115,7 +1117,7 @@ async def test_ipv64_laddr_socket_blocking_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -1163,8 +1165,9 @@ async def test_ipv64_laddr_socket_blocking_fails(
         ),
     ]
     loop = asyncio.get_running_loop()
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        Exception, match="Something really went wrong"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(Exception, match="Something really went wrong"),
     ):
         assert (
             await start_connection(
@@ -1197,7 +1200,7 @@ async def test_ipv64_laddr_eyeballs_ipv4_only_tried(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -1274,7 +1277,7 @@ async def test_ipv64_laddr_bind_fails_all_eyeballs_interleave_first__ipv6_fails(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         if address[0] == "dead:beef::":
@@ -1322,8 +1325,9 @@ async def test_ipv64_laddr_bind_fails_all_eyeballs_interleave_first__ipv6_fails(
         ),
     ]
     loop = asyncio.get_running_loop()
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        OSError, match="Multiple exceptions"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(OSError, match="Multiple exceptions"),
     ):
         assert (
             await start_connection(
@@ -1359,7 +1363,7 @@ async def test_all_same_exception_and_same_errno(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         raise OSError(5, "all fail")
@@ -1405,9 +1409,10 @@ async def test_all_same_exception_and_same_errno(
     ]
     loop = asyncio.get_running_loop()
     # We should get the same exception raised if they are all the same
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        OSError, match="all fail"
-    ) as exc_info:
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(OSError, match="all fail") as exc_info,
+    ):
         assert (
             await start_connection(
                 addr_info,
@@ -1448,7 +1453,7 @@ async def test_all_same_exception_and_with_different_errno(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         raise OSError(len(create_calls), "all fail")
@@ -1494,9 +1499,10 @@ async def test_all_same_exception_and_with_different_errno(
     ]
     loop = asyncio.get_running_loop()
     # We should get the same exception raised if they are all the same
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        OSError, match="all fail"
-    ) as exc_info:
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(OSError, match="all fail") as exc_info,
+    ):
         assert (
             await start_connection(
                 addr_info,
@@ -1552,7 +1558,7 @@ async def test_uvloop_runtime_error(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         raise RuntimeError("all fail")
@@ -1598,8 +1604,9 @@ async def test_uvloop_runtime_error(
     ]
     loop = asyncio.get_running_loop()
     # We should get the same exception raised if they are all the same
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        RuntimeError, match="all fail"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(RuntimeError, match="all fail"),
     ):
         assert (
             await start_connection(
@@ -1640,7 +1647,7 @@ async def test_uvloop_different_runtime_error(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         nonlocal counter
@@ -1688,8 +1695,9 @@ async def test_uvloop_different_runtime_error(
     ]
     loop = asyncio.get_running_loop()
     # We should get the same exception raised if they are all the same
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        RuntimeError, match="Multiple exceptions: 1, 2, 3"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(RuntimeError, match="Multiple exceptions: 1, 2, 3"),
     ):
         assert (
             await start_connection(
@@ -1730,7 +1738,7 @@ async def test_uvloop_mixing_os_and_runtime_error(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         nonlocal counter
@@ -1780,8 +1788,9 @@ async def test_uvloop_mixing_os_and_runtime_error(
     ]
     loop = asyncio.get_running_loop()
     # We should get the same exception raised if they are all the same
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        OSError, match="Multiple exceptions: 1"
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(OSError, match="Multiple exceptions: 1"),
     ):
         assert (
             await start_connection(
@@ -1825,7 +1834,7 @@ async def test_handling_system_exit(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         raise MockSystemExit
@@ -1870,9 +1879,11 @@ async def test_handling_system_exit(
         ),
     ]
     loop = asyncio.get_running_loop()
-    with pytest.raises(MockSystemExit), mock.patch.object(
-        loop, "sock_connect", _sock_connect
-    ), mock.patch.object(_staggered, "RE_RAISE_EXCEPTIONS", (MockSystemExit,)):
+    with (
+        pytest.raises(MockSystemExit),
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        mock.patch.object(_staggered, "RE_RAISE_EXCEPTIONS", (MockSystemExit,)),
+    ):
         await start_connection(
             addr_info,
             happy_eyeballs_delay=0.3,
@@ -1906,7 +1917,7 @@ async def test_cancellation_is_not_swallowed(
         return mock_socket
 
     async def _sock_connect(
-        sock: socket.socket, address: Tuple[str, int, int, int]
+        sock: socket.socket, address: tuple[str, int, int, int]
     ) -> None:
         create_calls.append(address)
         await asyncio.sleep(1000)
@@ -1952,8 +1963,9 @@ async def test_cancellation_is_not_swallowed(
     ]
     loop = asyncio.get_running_loop()
     # We should get the same exception raised if they are all the same
-    with mock.patch.object(loop, "sock_connect", _sock_connect), pytest.raises(
-        asyncio.CancelledError
+    with (
+        mock.patch.object(loop, "sock_connect", _sock_connect),
+        pytest.raises(asyncio.CancelledError),
     ):
         task = asyncio.create_task(
             start_connection(
