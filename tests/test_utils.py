@@ -1,5 +1,4 @@
 import socket
-from typing import List
 
 import pytest
 
@@ -34,7 +33,7 @@ def test_pop_addr_infos_interleave():
         "",
         ("107.6.106.83", 80),
     )
-    addr_info: List[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
+    addr_info: list[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
     addr_info_copy = addr_info.copy()
     pop_addr_infos_interleave(addr_info_copy, 1)
     assert addr_info_copy == [ipv6_addr_info_2]
@@ -71,7 +70,7 @@ def test_remove_addr_infos():
         "",
         ("107.6.106.83", 80),
     )
-    addr_info: List[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
+    addr_info: list[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
     addr_info_copy = addr_info.copy()
     remove_addr_infos(
         addr_info_copy,
@@ -107,7 +106,7 @@ def test_remove_addr_infos_slow_path():
         "",
         ("107.6.106.83", 80),
     )
-    addr_info: List[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
+    addr_info: list[AddrInfoType] = [ipv6_addr_info, ipv6_addr_info_2, ipv4_addr_info]
     addr_info_copy = addr_info.copy()
     remove_addr_infos(
         addr_info_copy, ("dead:beef:0000:0000:0000:0000:0000:0000", 80, 0, 0)

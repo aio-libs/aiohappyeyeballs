@@ -4,8 +4,8 @@ import asyncio
 import reprlib
 import threading
 from asyncio.events import AbstractEventLoop, TimerHandle
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Generator
 
 import pytest
 
