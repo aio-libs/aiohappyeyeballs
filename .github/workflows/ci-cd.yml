@@ -48,12 +48,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+      - name: Install Poetry
+        run: uv tool install poetry
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "poetry"
           allow-prereleases: true
-      - uses: snok/install-poetry@v1.4.1
       - name: Install Dependencies
         run: poetry install
         shell: bash
@@ -88,7 +94,12 @@ jobs:
         with:
           root_options: --noop
 
-      - uses: snok/install-poetry@v1.4.1
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+      - name: Install Poetry
+        run: uv tool install poetry
       - name: Install Dependencies
         run: poetry install --only main,test_build
         shell: bash
