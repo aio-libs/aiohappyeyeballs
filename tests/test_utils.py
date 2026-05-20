@@ -47,6 +47,32 @@ def test_pop_addr_infos_interleave():
     assert addr_info_copy == [ipv6_addr_info_2]
 
 
+def test_pop_addr_infos_interleave_with_duplicates():
+    """Duplicate entries past the interleave window must be kept."""
+    ipv6_addr_info = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::", 80, 0, 0),
+    )
+    ipv4_addr_info = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.83", 80),
+    )
+    addr_info: list[AddrInfoType] = [
+        ipv6_addr_info,
+        ipv6_addr_info,
+        ipv4_addr_info,
+        ipv4_addr_info,
+    ]
+    pop_addr_infos_interleave(addr_info, 1)
+    assert addr_info == [ipv6_addr_info, ipv4_addr_info]
+
+
 def test_remove_addr_infos():
     """Test remove_addr_infos."""
     ipv6_addr_info = (
