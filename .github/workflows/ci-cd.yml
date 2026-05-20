@@ -88,7 +88,9 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: test_release
-    concurrency: release
+    concurrency:
+      group: release-${{ github.head_ref || github.ref }}
+      cancel-in-progress: false
     if: github.ref_name != 'main'
 
     steps:
@@ -130,7 +132,9 @@ jobs:
     outputs:
       released: ${{ steps.release.outputs.released }}
 
-    concurrency: release
+    concurrency:
+      group: release-${{ github.head_ref || github.ref }}
+      cancel-in-progress: false
     permissions:
       id-token: write
       contents: write
@@ -162,7 +166,9 @@ jobs:
     if: needs.build_release.outputs.released == 'true'
     runs-on: ubuntu-latest
     environment: pypi
-    concurrency: release
+    concurrency:
+      group: release-${{ github.head_ref || github.ref }}
+      cancel-in-progress: false
     permissions:
       id-token: write
       contents: write
