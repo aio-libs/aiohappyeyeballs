@@ -51,6 +51,9 @@ async def start_connection(
             transport, protocol = await loop.create_connection(
                 MyProtocol, sock=socket, ...)
     """
+    if not addr_infos:
+        raise ValueError("addr_infos must not be empty")
+
     current_loop = loop or asyncio.get_running_loop()
 
     single_addr_info = len(addr_infos) == 1

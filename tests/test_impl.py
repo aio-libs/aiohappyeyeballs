@@ -59,6 +59,13 @@ def patch_socket(f):
 
 
 @pytest.mark.asyncio
+async def test_empty_addr_infos() -> None:
+    """An empty addr_infos raises a clear ValueError, not an opaque IndexError."""
+    with pytest.raises(ValueError, match="addr_infos must not be empty"):
+        await start_connection([])
+
+
+@pytest.mark.asyncio
 @patch_socket
 async def test_single_addr_info_errors(m_socket: ModuleType) -> None:
     idx = -1
