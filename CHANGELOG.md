@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.7.0 (2026-05-20)
+
+### Features
+
+- Add python 3.14 support ([`10e7d43`](https://github.com/aio-libs/aiohappyeyeballs/commit/10e7d4341666605de295dd00da716e30002e78c2))
+
 ## v2.6.2 (2026-05-20)
 
 ### Bug fixes
