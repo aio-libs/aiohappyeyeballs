@@ -70,13 +70,13 @@ def remove_addr_infos(
     The addr value is typically the return value of
     sock.getpeername().
     """
-    bad_addrs_infos = [ai for ai in addr_infos if ai[-1] == addr]
-    if not bad_addrs_infos:
+    kept = [ai for ai in addr_infos if ai[-1] != addr]
+    if len(kept) == len(addr_infos):
         # Slow path in case addr is formatted differently
         match_addr = _addr_tuple_to_ip_address(addr)
-        bad_addrs_infos = [
-            ai for ai in addr_infos if _addr_tuple_to_ip_address(ai[-1]) == match_addr
+        kept = [
+            ai for ai in addr_infos if _addr_tuple_to_ip_address(ai[-1]) != match_addr
         ]
-    if not bad_addrs_infos:
+    if len(kept) == len(addr_infos):
         raise ValueError(f"Address {addr} not found in addr_infos")
-    addr_infos[:] = [ai for ai in addr_infos if ai not in bad_addrs_infos]
+    addr_infos[:] = kept
