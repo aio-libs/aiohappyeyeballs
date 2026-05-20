@@ -1,7 +1,6 @@
 """Base implementation."""
 
 import asyncio
-import collections
 import contextlib
 import functools
 import itertools
@@ -239,14 +238,9 @@ def _interleave_addrinfos(
 ) -> list[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
-    addrinfos_by_family: collections.OrderedDict[int, list[AddrInfoType]] = (
-        collections.OrderedDict()
-    )
+    addrinfos_by_family: dict[int, list[AddrInfoType]] = {}
     for addr in addrinfos:
-        family = addr[0]
-        if family not in addrinfos_by_family:
-            addrinfos_by_family[family] = []
-        addrinfos_by_family[family].append(addr)
+        addrinfos_by_family.setdefault(addr[0], []).append(addr)
     addrinfos_lists = list(addrinfos_by_family.values())
 
     reordered: list[AddrInfoType] = []
