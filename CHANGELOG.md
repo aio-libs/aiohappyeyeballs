@@ -1,285 +1,299 @@
 # Changelog
 
+## v2.6.2 (2026-05-20)
+
+### Bug fixes
+
+- Clear error on empty addr_infos in start_connection ([`55dd76a`](https://github.com/aio-libs/aiohappyeyeballs/commit/55dd76aee978ca47a38899b9caf69d058bf41fb3))
+
+### Testing
+
+- Stop verify_no_lingering_tasks from leaking an event loop ([`ce43beb`](https://github.com/aio-libs/aiohappyeyeballs/commit/ce43beb0242007dc57be6e2f4e3bf0b9f4f239d1))
+
+### Refactoring
+
+- Optimize obtaining event-loop down to 1 line ([`02a7029`](https://github.com/aio-libs/aiohappyeyeballs/commit/02a70296210125b45952c3221db0dfb76d8ea911))
+
 ## v2.6.1 (2025-03-12)
 
 ### Bug fixes
 
-- Resolve typeerror on import for python < 3.9.2 (#151) ([`2042c82`](https://github.com/aio-libs/aiohappyeyeballs/commit/2042c82f9978f41c31b58aa4e3d8fc3b9c3ec2ec))
+- Resolve typeerror on import for python < 3.9.2 ([`2042c82`](https://github.com/aio-libs/aiohappyeyeballs/commit/2042c82f9978f41c31b58aa4e3d8fc3b9c3ec2ec))
 
 ## v2.6.0 (2025-03-11)
 
 ### Features
 
-- Publish documentation (#149) ([`4235273`](https://github.com/aio-libs/aiohappyeyeballs/commit/42352736d12c60d500c63b9598ffab05ef5e8829))
+- Publish documentation ([`4235273`](https://github.com/aio-libs/aiohappyeyeballs/commit/42352736d12c60d500c63b9598ffab05ef5e8829))
 
 ## v2.5.0 (2025-03-06)
 
 ### Features
 
-- Add callback for users to customize socket creation (#147) ([`8e1bc6a`](https://github.com/aio-libs/aiohappyeyeballs/commit/8e1bc6a4bc6282ccf29db441c33dd8d806003ffd))
+- Add callback for users to customize socket creation ([`8e1bc6a`](https://github.com/aio-libs/aiohappyeyeballs/commit/8e1bc6a4bc6282ccf29db441c33dd8d806003ffd))
 
 ## v2.4.8 (2025-03-04)
 
 ### Bug fixes
 
-- Close runner up sockets in the event there are multiple winners (#143) ([`476a05b`](https://github.com/aio-libs/aiohappyeyeballs/commit/476a05b956627700baa84eb6aac28c395da92a9f))
+- Close runner up sockets in the event there are multiple winners ([`476a05b`](https://github.com/aio-libs/aiohappyeyeballs/commit/476a05b956627700baa84eb6aac28c395da92a9f))
 
 ## v2.4.7 (2025-03-04)
 
 ### Bug fixes
 
-- Resolve warnings when running tests (#144) ([`e96264a`](https://github.com/aio-libs/aiohappyeyeballs/commit/e96264aec89b9bd34d37413f610d039c56393a48))
+- Resolve warnings when running tests ([`e96264a`](https://github.com/aio-libs/aiohappyeyeballs/commit/e96264aec89b9bd34d37413f610d039c56393a48))
 
 ## v2.4.6 (2025-02-07)
 
 ### Bug fixes
 
-- Ensure all timers are cancelled when after staggered race finishes (#136) ([`f75891d`](https://github.com/aio-libs/aiohappyeyeballs/commit/f75891d8974693b24af9789a8981ed7f6bc55c5c))
+- Ensure all timers are cancelled when after staggered race finishes ([`f75891d`](https://github.com/aio-libs/aiohappyeyeballs/commit/f75891d8974693b24af9789a8981ed7f6bc55c5c))
 
 ## v2.4.5 (2025-02-07)
 
 ### Bug fixes
 
-- Keep classifiers in project to avoid automatic enrichment (#134) ([`99edb20`](https://github.com/aio-libs/aiohappyeyeballs/commit/99edb20e9d3e53ead65b55cb3e93c22c03d06599))
-- Move classifiers to prevent recalculation by poetry (#131) ([`66e1c90`](https://github.com/aio-libs/aiohappyeyeballs/commit/66e1c90ae81f71c7039cd62c60417a96202d906c))
+- Keep classifiers in project to avoid automatic enrichment ([`99edb20`](https://github.com/aio-libs/aiohappyeyeballs/commit/99edb20e9d3e53ead65b55cb3e93c22c03d06599))
+- Move classifiers to prevent recalculation by poetry ([`66e1c90`](https://github.com/aio-libs/aiohappyeyeballs/commit/66e1c90ae81f71c7039cd62c60417a96202d906c))
 
 ## v2.4.4 (2024-11-30)
 
 ### Bug fixes
 
-- Handle oserror on failure to close socket instead of raising indexerror (#114) ([`c542f68`](https://github.com/aio-libs/aiohappyeyeballs/commit/c542f684d329fed04093caa2b31d8f7f6e0e0949))
+- Handle oserror on failure to close socket instead of raising indexerror ([`c542f68`](https://github.com/aio-libs/aiohappyeyeballs/commit/c542f684d329fed04093caa2b31d8f7f6e0e0949))
 
 ## v2.4.3 (2024-09-30)
 
 ### Bug fixes
 
-- Rewrite staggered_race to be race safe (#101) ([`9db617a`](https://github.com/aio-libs/aiohappyeyeballs/commit/9db617a982ee27994bf13c805f9c4f054f05de47))
-- Re-raise runtimeerror when uvloop raises runtimeerror during connect (#105) ([`c8f1fa9`](https://github.com/aio-libs/aiohappyeyeballs/commit/c8f1fa93d698f216f84de7074a6282777fbf0439))
+- Rewrite staggered_race to be race safe ([`9db617a`](https://github.com/aio-libs/aiohappyeyeballs/commit/9db617a982ee27994bf13c805f9c4f054f05de47))
+- Re-raise runtimeerror when uvloop raises runtimeerror during connect ([`c8f1fa9`](https://github.com/aio-libs/aiohappyeyeballs/commit/c8f1fa93d698f216f84de7074a6282777fbf0439))
 
 ## v2.4.2 (2024-09-27)
 
 ### Bug fixes
 
-- Copy staggered from standard lib for python 3.12+ (#95) ([`c5a4023`](https://github.com/aio-libs/aiohappyeyeballs/commit/c5a4023d904b3e72f30b8a9f56913894dda4c9d0))
+- Copy staggered from standard lib for python 3.12+ ([`c5a4023`](https://github.com/aio-libs/aiohappyeyeballs/commit/c5a4023d904b3e72f30b8a9f56913894dda4c9d0))
 
 ## v2.4.1 (2024-09-26)
 
 ### Bug fixes
 
-- Avoid passing loop to staggered.staggered_race (#94) ([`5f80b79`](https://github.com/aio-libs/aiohappyeyeballs/commit/5f80b7951f32d727039d9db776a17a6eba8877cd))
+- Avoid passing loop to staggered.staggered_race ([`5f80b79`](https://github.com/aio-libs/aiohappyeyeballs/commit/5f80b7951f32d727039d9db776a17a6eba8877cd))
 
 ## v2.4.0 (2024-08-19)
 
 ### Features
 
-- Add support for python 3.13 (#86) ([`4f2152f`](https://github.com/aio-libs/aiohappyeyeballs/commit/4f2152fbb6b1d915c2fd68219339d998c47a71f9))
+- Add support for python 3.13 ([`4f2152f`](https://github.com/aio-libs/aiohappyeyeballs/commit/4f2152fbb6b1d915c2fd68219339d998c47a71f9))
 
 ### Documentation
 
-- Fix a trivial typo in readme.md (#84) ([`f5ae7d4`](https://github.com/aio-libs/aiohappyeyeballs/commit/f5ae7d4bce04ee0645257ac828745a3b989ef149))
+- Fix a trivial typo in readme.md ([`f5ae7d4`](https://github.com/aio-libs/aiohappyeyeballs/commit/f5ae7d4bce04ee0645257ac828745a3b989ef149))
 
 ## v2.3.7 (2024-08-17)
 
 ### Bug fixes
 
-- Correct classifier for license python-2.0.1 (#83) ([`186be05`](https://github.com/aio-libs/aiohappyeyeballs/commit/186be056ea441bb3fa7620864f46c6f8431f3a34))
+- Correct classifier for license python-2.0.1 ([`186be05`](https://github.com/aio-libs/aiohappyeyeballs/commit/186be056ea441bb3fa7620864f46c6f8431f3a34))
 
 ## v2.3.6 (2024-08-16)
 
 ### Bug fixes
 
-- Adjust license to python-2.0.1 (#82) ([`30a2dc5`](https://github.com/aio-libs/aiohappyeyeballs/commit/30a2dc57c49d1000ebdafa8c81ecf4f79e35c9f3))
+- Adjust license to python-2.0.1 ([`30a2dc5`](https://github.com/aio-libs/aiohappyeyeballs/commit/30a2dc57c49d1000ebdafa8c81ecf4f79e35c9f3))
 
 ## v2.3.5 (2024-08-07)
 
 ### Bug fixes
 
-- Remove upper bound on python requirement (#74) ([`0de1e53`](https://github.com/aio-libs/aiohappyeyeballs/commit/0de1e534fc5b7526e11bf203ab09b95b13f3070b))
-- Preserve errno if all exceptions have the same errno (#77) ([`7bbb2bf`](https://github.com/aio-libs/aiohappyeyeballs/commit/7bbb2bf0feb3994953a52a1d606e682acad49cb8))
-- Adjust license classifier to better reflect license terms (#78) ([`56e7ba6`](https://github.com/aio-libs/aiohappyeyeballs/commit/56e7ba612c5029364bb960b07022a2b720f0a967))
+- Remove upper bound on python requirement ([`0de1e53`](https://github.com/aio-libs/aiohappyeyeballs/commit/0de1e534fc5b7526e11bf203ab09b95b13f3070b))
+- Preserve errno if all exceptions have the same errno ([`7bbb2bf`](https://github.com/aio-libs/aiohappyeyeballs/commit/7bbb2bf0feb3994953a52a1d606e682acad49cb8))
+- Adjust license classifier to better reflect license terms ([`56e7ba6`](https://github.com/aio-libs/aiohappyeyeballs/commit/56e7ba612c5029364bb960b07022a2b720f0a967))
 
 ### Documentation
 
-- Add link to happy eyeballs explanation (#73) ([`077710c`](https://github.com/aio-libs/aiohappyeyeballs/commit/077710c150b6c762ffe408e0ad418c506a2d6f31))
+- Add link to happy eyeballs explanation ([`077710c`](https://github.com/aio-libs/aiohappyeyeballs/commit/077710c150b6c762ffe408e0ad418c506a2d6f31))
 
 ## v2.3.4 (2024-07-31)
 
 ### Bug fixes
 
-- Add missing asyncio to fix truncated package description (#67) ([`2644df1`](https://github.com/aio-libs/aiohappyeyeballs/commit/2644df179e21e4513da857f2aea2aa64a3fb6316))
+- Add missing asyncio to fix truncated package description ([`2644df1`](https://github.com/aio-libs/aiohappyeyeballs/commit/2644df179e21e4513da857f2aea2aa64a3fb6316))
 
 ## v2.3.3 (2024-07-31)
 
 ### Bug fixes
 
-- Add missing python version classifiers (#65) ([`489016f`](https://github.com/aio-libs/aiohappyeyeballs/commit/489016feb53d4fd5f9880f27dc40a5198d5b0be2))
-- Update classifiers to include license (#60) ([`a746c29`](https://github.com/aio-libs/aiohappyeyeballs/commit/a746c296b324407efef272f422a990587b9d6057))
-- Workaround broken `asyncio.staggered` on python < 3.8.2 (#61) ([`b16f107`](https://github.com/aio-libs/aiohappyeyeballs/commit/b16f107d9493817247c27ab83522901f086a13b5))
-- Include tests in the source distribution package (#62) ([`53053b6`](https://github.com/aio-libs/aiohappyeyeballs/commit/53053b6a38ef868e0170940ced5e0611ebd1be4c))
+- Add missing python version classifiers ([`489016f`](https://github.com/aio-libs/aiohappyeyeballs/commit/489016feb53d4fd5f9880f27dc40a5198d5b0be2))
+- Update classifiers to include license ([`a746c29`](https://github.com/aio-libs/aiohappyeyeballs/commit/a746c296b324407efef272f422a990587b9d6057))
+- Workaround broken `asyncio.staggered` on python < 3.8.2 ([`b16f107`](https://github.com/aio-libs/aiohappyeyeballs/commit/b16f107d9493817247c27ab83522901f086a13b5))
+- Include tests in the source distribution package ([`53053b6`](https://github.com/aio-libs/aiohappyeyeballs/commit/53053b6a38ef868e0170940ced5e0611ebd1be4c))
 
 ## v2.3.2 (2024-01-06)
 
 ### Bug fixes
 
-- Update urls for the new home for this library (#43) ([`c6d4358`](https://github.com/aio-libs/aiohappyeyeballs/commit/c6d43586d5ca56472892767d4a47d28348158544))
+- Update urls for the new home for this library ([`c6d4358`](https://github.com/aio-libs/aiohappyeyeballs/commit/c6d43586d5ca56472892767d4a47d28348158544))
 
 ## v2.3.1 (2023-12-14)
 
 ### Bug fixes
 
-- Remove test import from tests (#31) ([`c529b15`](https://github.com/aio-libs/aiohappyeyeballs/commit/c529b15fbead0aa5cde9dd5c460ff5abd15fc355))
+- Remove test import from tests ([`c529b15`](https://github.com/aio-libs/aiohappyeyeballs/commit/c529b15fbead0aa5cde9dd5c460ff5abd15fc355))
 
 ## v2.3.0 (2023-12-12)
 
 ### Features
 
-- Avoid _interleave_addrinfos when there is only a single addr_info (#29) ([`305f6f1`](https://github.com/aio-libs/aiohappyeyeballs/commit/305f6f13d028ab3ead7923870601175102c5970c))
+- Avoid _interleave_addrinfos when there is only a single addr_info ([`305f6f1`](https://github.com/aio-libs/aiohappyeyeballs/commit/305f6f13d028ab3ead7923870601175102c5970c))
 
 ## v2.2.0 (2023-12-11)
 
 ### Features
 
-- Make interleave with pop_addr_infos_interleave optional to match cpython (#28) ([`adbc8ad`](https://github.com/aio-libs/aiohappyeyeballs/commit/adbc8adfaa44349ca83966787400413668f0b4b6))
+- Make interleave with pop_addr_infos_interleave optional to match cpython ([`adbc8ad`](https://github.com/aio-libs/aiohappyeyeballs/commit/adbc8adfaa44349ca83966787400413668f0b4b6))
 
 ## v2.1.0 (2023-12-11)
 
 ### Features
 
-- Add addr_to_addr_info util for converting addr to addr_infos (#27) ([`2e25a98`](https://github.com/aio-libs/aiohappyeyeballs/commit/2e25a98f2339d84bc7951ad17f0b38c104a97a71))
+- Add addr_to_addr_info util for converting addr to addr_infos ([`2e25a98`](https://github.com/aio-libs/aiohappyeyeballs/commit/2e25a98f2339d84bc7951ad17f0b38c104a97a71))
 
 ## v2.0.0 (2023-12-10)
 
 ### Features
 
-- Require the full address tuple for the remove_addr_infos util (#26) ([`d7e5df1`](https://github.com/aio-libs/aiohappyeyeballs/commit/d7e5df12a01838e81729af4c49938e98b3407e03))
+- Require the full address tuple for the remove_addr_infos util ([`d7e5df1`](https://github.com/aio-libs/aiohappyeyeballs/commit/d7e5df12a01838e81729af4c49938e98b3407e03))
 
 ## v1.8.1 (2023-12-10)
 
 ### Bug fixes
 
-- Move types into a single file (#24) ([`8d4cfee`](https://github.com/aio-libs/aiohappyeyeballs/commit/8d4cfeeaa7862e028e941c49f8c84dcee0b9b1ac))
+- Move types into a single file ([`8d4cfee`](https://github.com/aio-libs/aiohappyeyeballs/commit/8d4cfeeaa7862e028e941c49f8c84dcee0b9b1ac))
 
 ## v1.8.0 (2023-12-10)
 
 ### Features
 
-- Add utils (#23) ([`d89311d`](https://github.com/aio-libs/aiohappyeyeballs/commit/d89311d1a433dde75863019a08717a531f68befa))
+- Add utils ([`d89311d`](https://github.com/aio-libs/aiohappyeyeballs/commit/d89311d1a433dde75863019a08717a531f68befa))
 
 ## v1.7.0 (2023-12-09)
 
 ### Bug fixes
 
-- License should be psf-2.0 (#22) ([`ca9c1fc`](https://github.com/aio-libs/aiohappyeyeballs/commit/ca9c1fca4d63c54855fbe582132b5dcb229c7591))
+- License should be psf-2.0 ([`ca9c1fc`](https://github.com/aio-libs/aiohappyeyeballs/commit/ca9c1fca4d63c54855fbe582132b5dcb229c7591))
 
 ### Features
 
-- Add some more examples to the docs (#21) ([`6cd0b5d`](https://github.com/aio-libs/aiohappyeyeballs/commit/6cd0b5d10357a9d20fc5ee1c96db18c6994cd8fc))
+- Add some more examples to the docs ([`6cd0b5d`](https://github.com/aio-libs/aiohappyeyeballs/commit/6cd0b5d10357a9d20fc5ee1c96db18c6994cd8fc))
 
 ## v1.6.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for multiple and same exceptions (#20) ([`2781b87`](https://github.com/aio-libs/aiohappyeyeballs/commit/2781b87c56aa1c08345d91dce5c1642f2b3e396d))
+- Add coverage for multiple and same exceptions ([`2781b87`](https://github.com/aio-libs/aiohappyeyeballs/commit/2781b87c56aa1c08345d91dce5c1642f2b3e396d))
 
 ## v1.5.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for setblocking failing (#19) ([`f759a08`](https://github.com/aio-libs/aiohappyeyeballs/commit/f759a08180f0237cb68d353090f7ba0efe625074))
-- Add cover for passing the loop (#18) ([`2d26911`](https://github.com/aio-libs/aiohappyeyeballs/commit/2d26911e9237691c168a705b2d6be2a68fa8b7ac))
+- Add coverage for setblocking failing ([`f759a08`](https://github.com/aio-libs/aiohappyeyeballs/commit/f759a08180f0237cb68d353090f7ba0efe625074))
+- Add cover for passing the loop ([`2d26911`](https://github.com/aio-libs/aiohappyeyeballs/commit/2d26911e9237691c168a705b2d6be2a68fa8b7ac))
 
 ## v1.4.1 (2023-12-09)
 
 ### Bug fixes
 
-- Ensure exception error is stringified (#17) ([`747cf1d`](https://github.com/aio-libs/aiohappyeyeballs/commit/747cf1d231dc427b79ff1f8128779413a50be5d8))
+- Ensure exception error is stringified ([`747cf1d`](https://github.com/aio-libs/aiohappyeyeballs/commit/747cf1d231dc427b79ff1f8128779413a50be5d8))
 
 ## v1.4.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for unexpected exception (#16) ([`bad4874`](https://github.com/aio-libs/aiohappyeyeballs/commit/bad48745d3621fcbbe559d55180dc5f5856dc0fa))
+- Add coverage for unexpected exception ([`bad4874`](https://github.com/aio-libs/aiohappyeyeballs/commit/bad48745d3621fcbbe559d55180dc5f5856dc0fa))
 
 ## v1.3.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for bind failure with local addresses (#15) ([`f71ec23`](https://github.com/aio-libs/aiohappyeyeballs/commit/f71ec23228d4dad4bc2c3a6630e6e4361b54df44))
+- Add coverage for bind failure with local addresses ([`f71ec23`](https://github.com/aio-libs/aiohappyeyeballs/commit/f71ec23228d4dad4bc2c3a6630e6e4361b54df44))
 
 ## v1.2.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for passing local addresses (#14) ([`72a92e3`](https://github.com/aio-libs/aiohappyeyeballs/commit/72a92e3a599cde082856354e806a793f2b9eff62))
+- Add coverage for passing local addresses ([`72a92e3`](https://github.com/aio-libs/aiohappyeyeballs/commit/72a92e3a599cde082856354e806a793f2b9eff62))
 
 ## v1.1.0 (2023-12-09)
 
 ### Features
 
-- Add example usage (#13) ([`707fddc`](https://github.com/aio-libs/aiohappyeyeballs/commit/707fddcd8e8aff27af2180af6271898003ca1782))
+- Add example usage ([`707fddc`](https://github.com/aio-libs/aiohappyeyeballs/commit/707fddcd8e8aff27af2180af6271898003ca1782))
 
 ## v1.0.0 (2023-12-09)
 
 ### Features
 
-- Rename create_connection to start_connection (#12) ([`f8b6038`](https://github.com/aio-libs/aiohappyeyeballs/commit/f8b60383d9b9f013baf421ad4e4e183559b7a705))
+- Rename create_connection to start_connection ([`f8b6038`](https://github.com/aio-libs/aiohappyeyeballs/commit/f8b60383d9b9f013baf421ad4e4e183559b7a705))
 
 ## v0.9.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for interleave (#11) ([`62817f1`](https://github.com/aio-libs/aiohappyeyeballs/commit/62817f1473bb5702f8fa9edc6f6b24139990cd01))
+- Add coverage for interleave ([`62817f1`](https://github.com/aio-libs/aiohappyeyeballs/commit/62817f1473bb5702f8fa9edc6f6b24139990cd01))
 
 ## v0.8.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for multi ipv6 (#10) ([`6dc8f89`](https://github.com/aio-libs/aiohappyeyeballs/commit/6dc8f89ff99a38c8ecaf8045c9afbe683d6f2c6e))
+- Add coverage for multi ipv6 ([`6dc8f89`](https://github.com/aio-libs/aiohappyeyeballs/commit/6dc8f89ff99a38c8ecaf8045c9afbe683d6f2c6e))
 
 ## v0.7.0 (2023-12-09)
 
 ### Features
 
-- Add coverage for ipv6 failure (#9) ([`7aee8f6`](https://github.com/aio-libs/aiohappyeyeballs/commit/7aee8f64064cfc8d79f385c4dfee45036aacd6fd))
+- Add coverage for ipv6 failure ([`7aee8f6`](https://github.com/aio-libs/aiohappyeyeballs/commit/7aee8f64064cfc8d79f385c4dfee45036aacd6fd))
 
 ## v0.6.0 (2023-12-09)
 
 ### Features
 
-- Improve test coverage (#8) ([`afcfe5a`](https://github.com/aio-libs/aiohappyeyeballs/commit/afcfe5a350acc50a098009617511cd9d21b22f47))
+- Improve test coverage ([`afcfe5a`](https://github.com/aio-libs/aiohappyeyeballs/commit/afcfe5a350acc50a098009617511cd9d21b22f47))
 
 ## v0.5.0 (2023-12-09)
 
 ### Features
 
-- Improve doc strings (#7) ([`3d5f7fd`](https://github.com/aio-libs/aiohappyeyeballs/commit/3d5f7fde55c4bdd4f5e6cff589ae9b47b279d663))
+- Improve doc strings ([`3d5f7fd`](https://github.com/aio-libs/aiohappyeyeballs/commit/3d5f7fde55c4bdd4f5e6cff589ae9b47b279d663))
 
 ## v0.4.0 (2023-12-09)
 
 ### Features
 
-- Add more tests (#6) ([`4428c07`](https://github.com/aio-libs/aiohappyeyeballs/commit/4428c0714e3e100605f940eb6adee2e86788b4db))
+- Add more tests ([`4428c07`](https://github.com/aio-libs/aiohappyeyeballs/commit/4428c0714e3e100605f940eb6adee2e86788b4db))
 
 ## v0.3.0 (2023-12-09)
 
 ### Features
 
-- Optimize for single case (#5) ([`c7d72f3`](https://github.com/aio-libs/aiohappyeyeballs/commit/c7d72f3cdd13149319fc9e4848146d23bddc619b))
+- Optimize for single case ([`c7d72f3`](https://github.com/aio-libs/aiohappyeyeballs/commit/c7d72f3cdd13149319fc9e4848146d23bddc619b))
 
 ## v0.2.0 (2023-12-09)
 
 ### Features
 
-- Optimize for single case (#4) ([`d371c46`](https://github.com/aio-libs/aiohappyeyeballs/commit/d371c4687d3b3861a4f0287ac5229853f895807b))
+- Optimize for single case ([`d371c46`](https://github.com/aio-libs/aiohappyeyeballs/commit/d371c4687d3b3861a4f0287ac5229853f895807b))
 
 ## v0.1.0 (2023-12-09)
 
 ### Features
 
-- Init (#2) ([`c9a9099`](https://github.com/aio-libs/aiohappyeyeballs/commit/c9a90994a40d5f49cb37d3e2708db4b4278649ef))
+- Init ([`c9a9099`](https://github.com/aio-libs/aiohappyeyeballs/commit/c9a90994a40d5f49cb37d3e2708db4b4278649ef))
 
 ## v0.0.1 (2023-12-09)
 
 ### Bug fixes
 
-- Reserve name on pypi (#1) ([`2207f8d`](https://github.com/aio-libs/aiohappyeyeballs/commit/2207f8d361af4ec0b853b07fb743eb957a0b368a))
+- Reserve name on pypi ([`2207f8d`](https://github.com/aio-libs/aiohappyeyeballs/commit/2207f8d361af4ec0b853b07fb743eb957a0b368a))
