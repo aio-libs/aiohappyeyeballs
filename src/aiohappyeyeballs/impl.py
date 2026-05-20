@@ -209,18 +209,9 @@ async def _connect_sock(
                     raise OSError(f"no matching local address with {family=} found")
         await loop.sock_connect(sock, address)
         return sock
-    except (RuntimeError, OSError) as exc:
-        my_exceptions.append(exc)
-        if sock is not None:
-            if open_sockets is not None:
-                open_sockets.remove(sock)
-            try:
-                sock.close()
-            except OSError as e:
-                my_exceptions.append(e)
-                raise
-        raise
-    except:
+    except BaseException as exc:
+        if isinstance(exc, (RuntimeError, OSError)):
+            my_exceptions.append(exc)
         if sock is not None:
             if open_sockets is not None:
                 open_sockets.remove(sock)
