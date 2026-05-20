@@ -20,16 +20,26 @@ jobs:
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
 
-  # Make sure commit messages follow the conventional commits convention:
+  # Make sure the PR title follows the conventional commits convention:
   # https://www.conventionalcommits.org
-  commitlint:
-    name: Lint Commit Messages
+  # PRs are squash-merged, so the PR title becomes the commit on main and
+  # drives python-semantic-release's version bump.
+  pr-title:
+    name: Lint PR Title
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: amannn/action-semantic-pull-request@v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          fetch-depth: 0
-      - uses: wagoid/commitlint-github-action@v6.2.1
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            starts with a lowercase character.
 
   test:
     strategy:
@@ -74,7 +84,6 @@ jobs:
     needs:
       - test
       - lint
-      - commitlint
 
     runs-on: ubuntu-latest
     environment: test_release
@@ -113,7 +122,6 @@ jobs:
     needs:
       - test
       - lint
-      - commitlint
 
     if: github.ref_name == 'main' && !startsWith(github.event.pull_request.title,'chore') && !startsWith(github.event.head_commit.message,'chore')
 
