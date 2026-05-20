@@ -44,8 +44,12 @@ def long_repr_strings() -> Generator[None, None, None]:
 def verify_no_lingering_tasks() -> Generator[None, None, None]:
     """Verify that all tasks are cleaned up."""
     try:
-        event_loop = asyncio.get_event_loop()
+        event_loop = asyncio.get_running_loop()
     except RuntimeError:
+        # No running loop (e.g. a synchronous test). Calling
+        # asyncio.get_event_loop() here would implicitly create and leak a
+        # new loop on Python >= 3.10, raising a DeprecationWarning and a
+        # ResourceWarning. There is nothing to verify, so just skip.
         yield
         return
     tasks_before = asyncio.all_tasks(event_loop)
