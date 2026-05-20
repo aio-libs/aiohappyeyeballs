@@ -240,7 +240,11 @@ def _interleave_addrinfos(
     # Group addresses by family
     addrinfos_by_family: dict[int, list[AddrInfoType]] = {}
     for addr in addrinfos:
-        addrinfos_by_family.setdefault(addr[0], []).append(addr)
+        family = addr[0]
+        try:
+            addrinfos_by_family[family].append(addr)
+        except KeyError:
+            addrinfos_by_family[family] = [addr]
     addrinfos_lists = list(addrinfos_by_family.values())
 
     reordered: list[AddrInfoType] = []
