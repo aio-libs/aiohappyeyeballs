@@ -101,7 +101,7 @@ jobs:
       - name: Test release
         uses: python-semantic-release/python-semantic-release@v10.5.3
         with:
-          root_options: --noop
+          no_operation_mode: true
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v8.1.0
