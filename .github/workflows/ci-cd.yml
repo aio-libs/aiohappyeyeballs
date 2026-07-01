@@ -81,6 +81,35 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  # Runs on the main push (records the baseline) and every PR (compares against
+  # it). Uses CodSpeed's tokenless OAuth (no token input), which also lets fork
+  # PRs report. Pinned to a single stock CPython so the callgrind baseline is
+  # stable.
+  benchmarks:
+    name: Benchmarks (CodSpeed)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          enable-cache: true
+      - name: Install Poetry
+        run: uv tool install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: "poetry"
+      - name: Install Dependencies
+        run: poetry install --with benchmarks
+        shell: bash
+      - name: Run benchmarks
+        uses: CodSpeedHQ/action@v4
+        with:
+          mode: simulation
+          run: poetry run pytest tests/benchmarks --codspeed --no-cov
+
   test_release:
     needs:
       - test

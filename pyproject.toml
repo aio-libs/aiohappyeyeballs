@@ -51,6 +51,14 @@ sphinx = ">=8.1.3"
 furo = ">=2023.5.20"
 sphinx-autobuild = ">=2021.3.14"
 
+# Optional so the default install and the Python 3.14 test matrix never pull in
+# pytest-codspeed; only the CodSpeed CI job installs this group.
+[tool.poetry.group.benchmarks]
+optional = true
+
+[tool.poetry.group.benchmarks.dependencies]
+pytest-codspeed = ">=4.0.0"
+
 
 [tool.poetry.group.test_build.dependencies]
 twine = ">=4.0.2,<7.0.0"
