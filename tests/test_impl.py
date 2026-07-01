@@ -2033,3 +2033,112 @@ async def test_single_addr_info_close_errors(
     ]
     with pytest.raises(OSError, match="during close"):
         await start_connection(addr_info)
+
+
+def test_interleave_addrinfos():
+    """_interleave_addrinfos groups by family and round-robins across families."""
+    ipv6_1 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::1", 80, 0, 0),
+    )
+    ipv6_2 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::2", 80, 0, 0),
+    )
+    ipv6_3 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::3", 80, 0, 0),
+    )
+    ipv4_1 = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.1", 80),
+    )
+    ipv4_2 = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.2", 80),
+    )
+
+    # Even split: strict round-robin, IPv6 first because it appears first.
+    assert impl._interleave_addrinfos([ipv6_1, ipv6_2, ipv4_1, ipv4_2]) == [
+        ipv6_1,
+        ipv4_1,
+        ipv6_2,
+        ipv4_2,
+    ]
+
+    # Uneven split: leftover IPv6 entries trail once IPv4 is exhausted.
+    assert impl._interleave_addrinfos([ipv6_1, ipv6_2, ipv6_3, ipv4_1]) == [
+        ipv6_1,
+        ipv4_1,
+        ipv6_2,
+        ipv6_3,
+    ]
+
+    # Family order follows first appearance: IPv4 leads here.
+    assert impl._interleave_addrinfos([ipv4_1, ipv6_1, ipv4_2]) == [
+        ipv4_1,
+        ipv6_1,
+        ipv4_2,
+    ]
+
+    # A single family keeps its original order.
+    assert impl._interleave_addrinfos([ipv4_1, ipv4_2]) == [ipv4_1, ipv4_2]
+
+    # No input, no output.
+    assert impl._interleave_addrinfos([]) == []
+
+
+def test_interleave_addrinfos_first_address_family_count():
+    """first_address_family_count keeps N of the first family up front."""
+    ipv6_1 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::1", 80, 0, 0),
+    )
+    ipv6_2 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::2", 80, 0, 0),
+    )
+    ipv6_3 = (
+        socket.AF_INET6,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("dead:beef::3", 80, 0, 0),
+    )
+    ipv4_1 = (
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        socket.IPPROTO_TCP,
+        "",
+        ("107.6.106.1", 80),
+    )
+
+    result = impl._interleave_addrinfos(
+        [ipv6_1, ipv6_2, ipv6_3, ipv4_1], first_address_family_count=2
+    )
+    # The first two IPv6 entries stay ahead of the interleaved remainder.
+    assert result == [ipv6_1, ipv6_2, ipv4_1, ipv6_3]
+    # Nothing is dropped or duplicated by the reshuffle.
+    assert set(result) == {ipv6_1, ipv6_2, ipv6_3, ipv4_1}
+    assert len(result) == 4

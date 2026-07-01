@@ -5,6 +5,7 @@ import contextlib
 import functools
 import itertools
 import socket
+from collections import defaultdict
 from collections.abc import Sequence
 
 from . import _staggered
@@ -229,13 +230,9 @@ def _interleave_addrinfos(
 ) -> list[AddrInfoType]:
     """Interleave list of addrinfo tuples by family."""
     # Group addresses by family
-    addrinfos_by_family: dict[int, list[AddrInfoType]] = {}
+    addrinfos_by_family: defaultdict[int, list[AddrInfoType]] = defaultdict(list)
     for addr in addrinfos:
-        family = addr[0]
-        try:
-            addrinfos_by_family[family].append(addr)
-        except KeyError:
-            addrinfos_by_family[family] = [addr]
+        addrinfos_by_family[addr[0]].append(addr)
     addrinfos_lists = list(addrinfos_by_family.values())
 
     reordered: list[AddrInfoType] = []
