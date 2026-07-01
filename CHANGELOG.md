@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.7.1 (2026-07-01)
+
+### Performance improvements
+
+- Use defaultdict to help with performance ([`e10f335`](https://github.com/aio-libs/aiohappyeyeballs/commit/e10f335ad9630122832e967428ac138992a50bca))
+
+### Refactoring
+
+- Simplify _interleave_addrinfos family grouping ([`fdf6548`](https://github.com/aio-libs/aiohappyeyeballs/commit/fdf6548a5f8b38e45ad7cee8add3c3a7e34e2805))
+- Collapse collect-then-remove pattern in utils helpers ([`0dd3fd1`](https://github.com/aio-libs/aiohappyeyeballs/commit/0dd3fd16fe394eb8493000dc9b9894fad3ca3190))
+- Merge identical except blocks in _connect_sock cleanup ([`b7c186e`](https://github.com/aio-libs/aiohappyeyeballs/commit/b7c186e3242eb4d6eaf0918857a99c263b3186fb))
+
 ## v2.7.0 (2026-05-20)
 
 ### Features
