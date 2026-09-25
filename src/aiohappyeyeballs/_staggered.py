@@ -3,7 +3,6 @@ import contextlib
 from collections.abc import Awaitable, Callable, Iterable
 from typing import (
     TYPE_CHECKING,
-    Any,
     TypeVar,
 )
 
@@ -19,13 +18,13 @@ def _set_result(wait_next: "asyncio.Future[None]") -> None:
 
 
 async def _wait_one(
-    futures: "Iterable[asyncio.Future[Any]]",
+    futures: "Iterable[asyncio.Future[_T]]",
     loop: asyncio.AbstractEventLoop,
-) -> _T:
+) -> asyncio.Future[_T]:
     """Wait for the first future to complete."""
-    wait_next = loop.create_future()
+    wait_next = loop.create_future()  # type: asyncio.Future[asyncio.Future[_T]]
 
-    def _on_completion(fut: "asyncio.Future[Any]") -> None:
+    def _on_completion(fut: "asyncio.Future[_T]") -> None:
         if not wait_next.done():
             wait_next.set_result(fut)
 
