@@ -22,7 +22,7 @@ async def _wait_one(
     loop: asyncio.AbstractEventLoop,
 ) -> asyncio.Future[_T]:
     """Wait for the first future to complete."""
-    wait_next = loop.create_future() # type: asyncio.Future[asyncio.Future[_T]]
+    wait_next = loop.create_future()  # type: asyncio.Future[asyncio.Future[_T]]
 
     def _on_completion(fut: "asyncio.Future[_T]") -> None:
         if not wait_next.done():
