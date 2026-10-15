@@ -61,7 +61,7 @@ pytest-codspeed = ">=4.0.0"
 
 
 [tool.poetry.group.test_build.dependencies]
-twine = ">=4.0.2,<7.0.0"
+twine = ">=7.0.0,<8.0.0"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
