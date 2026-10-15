@@ -1,5 +1,7 @@
 import asyncio
+import gc
 import socket
+import weakref
 from collections.abc import Sequence
 from types import ModuleType
 from unittest import mock
@@ -88,6 +90,49 @@ async def test_single_addr_info_errors(m_socket: ModuleType) -> None:
     ]
     with pytest.raises(OSError, match=errors[0]):
         await start_connection(addr_info)
+
+
+class _RefusedError(OSError):
+    """An OSError that can be weakly referenced."""
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("happy_eyeballs_delay", [None, 0.3])
+@patch_socket
+async def test_failed_connection_freed_without_cycle_collection(
+    m_socket: ModuleType, happy_eyeballs_delay: float | None
+) -> None:
+    """The raised exception is freed once the caller drops it."""
+
+    def _socket(*args, **kw):
+        raise _RefusedError(111, "refused")
+
+    m_socket.socket = _socket  # type: ignore
+    addr_info = [
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.82", 80),
+        ),
+        (
+            socket.AF_INET,
+            socket.SOCK_STREAM,
+            socket.IPPROTO_TCP,
+            "",
+            ("107.6.106.83", 80),
+        ),
+    ]
+    gc.disable()
+    try:
+        try:
+            await start_connection(addr_info, happy_eyeballs_delay=happy_eyeballs_delay)
+        except _RefusedError as exc:
+            ref = weakref.ref(exc)
+        assert ref() is None
+    finally:
+        gc.enable()
 
 
 @pytest.mark.asyncio
