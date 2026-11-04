@@ -35,9 +35,9 @@ Remember to prefix with 'Fixes' if it closes an issue (e.g. 'Fixes #123').
 - [ ] Unit tests for the changes exist
 - [ ] Documentation reflects the changes
 - [ ] The pull request title follows
-  [Conventional Commits](https://www.conventionalcommits.org)
-  * PRs are squash-merged, so the title becomes the commit message on
+      [Conventional Commits](https://www.conventionalcommits.org)
+  - PRs are squash-merged, so the title becomes the commit message on
     `main` and is used to generate the changelog and the next version
-  * use a type such as `feat`, `fix`, `perf`, `docs`, `test`, `ci` or
+  - use a type such as `feat`, `fix`, `perf`, `docs`, `test`, `ci` or
     `chore`, followed by a lowercase subject, for example:
     `fix: handle empty address lists when resolving hosts`
