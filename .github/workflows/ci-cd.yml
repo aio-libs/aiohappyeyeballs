@@ -84,10 +84,11 @@ jobs:
   # Runs on the main push (records the baseline) and every PR (compares against
   # it). Uses CodSpeed's tokenless OAuth (no token input), which also lets fork
   # PRs report. Pinned to a single stock CPython so the callgrind baseline is
-  # stable.
+  # stable. Pinned to ubuntu-24.04 because the CodSpeed runner reports
+  # "Unsupported system" on ubuntu-26.04 (the current ubuntu-latest).
   benchmarks:
     name: Benchmarks (CodSpeed)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - name: Set up uv
