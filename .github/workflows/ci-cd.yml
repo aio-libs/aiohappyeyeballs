@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
@@ -31,7 +31,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: amannn/action-semantic-pull-request@v6.1.1
+      - uses: amannn/action-semantic-pull-request@v6.1.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -59,13 +59,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       - name: Install Poetry
         run: uv tool install poetry
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
           cache: "poetry"
@@ -77,27 +77,28 @@ jobs:
         run: poetry run pytest --cov-report=xml
         shell: bash
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7.0.0
+        uses: codecov/codecov-action@v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   # Runs on the main push (records the baseline) and every PR (compares against
   # it). Uses CodSpeed's tokenless OAuth (no token input), which also lets fork
   # PRs report. Pinned to a single stock CPython so the callgrind baseline is
-  # stable.
+  # stable. Pinned to ubuntu-24.04 because the CodSpeed runner reports
+  # "Unsupported system" on ubuntu-26.04 (the current ubuntu-latest).
   benchmarks:
     name: Benchmarks (CodSpeed)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       - name: Install Poetry
         run: uv tool install poetry
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: "poetry"
@@ -105,7 +106,7 @@ jobs:
         run: poetry install --with benchmarks
         shell: bash
       - name: Run benchmarks
-        uses: CodSpeedHQ/action@v4
+        uses: CodSpeedHQ/action@v5
         with:
           mode: simulation
           run: poetry run pytest tests/benchmarks --codspeed --no-cov
@@ -123,19 +124,22 @@ jobs:
     if: github.ref_name != 'main'
 
     steps:
+      # Check out the PR branch by name from the repo it lives in; upstream
+      # branch creation is restricted, so PR branches come from forks.
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           ref: ${{ github.head_ref || github.ref_name }}
 
       # Dry run of PSR to build the distribution
       - name: Test release
-        uses: python-semantic-release/python-semantic-release@v10.5.3
+        uses: python-semantic-release/python-semantic-release@v10.7.0
         with:
           no_operation_mode: true
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       - name: Install Poetry
@@ -176,7 +180,7 @@ jobs:
 
       # On main branch: Call PSR to build the distribution
       - name: Release
-        uses: python-semantic-release/python-semantic-release@v10.5.3
+        uses: python-semantic-release/python-semantic-release@v10.7.0
         id: release
 
         with:
