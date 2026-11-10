@@ -12,7 +12,10 @@ from aiohappyeyeballs._staggered import staggered_race
 
 
 def tearDownModule():
-    asyncio.set_event_loop_policy(None)
+    if hasattr(asyncio, "set_event_loop_policy"):
+        asyncio.set_event_loop_policy(None)
+    else:
+        asyncio.set_event_loop(None)
 
 
 class StaggeredTests(unittest.IsolatedAsyncioTestCase):
