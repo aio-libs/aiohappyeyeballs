@@ -125,12 +125,9 @@ jobs:
     if: github.ref_name != 'main'
 
     steps:
-      # Check out the PR branch by name from the repo it lives in; upstream
-      # branch creation is restricted, so PR branches come from forks.
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           ref: ${{ github.head_ref || github.ref_name }}
 
       # Dry run of PSR to build the distribution
