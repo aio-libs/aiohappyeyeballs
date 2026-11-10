@@ -57,7 +57,7 @@ sphinx-autobuild = ">=2021.3.14"
 optional = true
 
 [tool.poetry.group.benchmarks.dependencies]
-pytest-codspeed = ">=4.0.0"
+pytest-codspeed = ">=5.0.4"
 
 
 [tool.poetry.group.test_build.dependencies]
