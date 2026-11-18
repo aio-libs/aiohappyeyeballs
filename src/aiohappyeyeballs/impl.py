@@ -240,8 +240,12 @@ def _interleave_addrinfos(
         reordered.extend(addrinfos_lists[0][: first_address_family_count - 1])
         del addrinfos_lists[0][: first_address_family_count - 1]
     reordered.extend(
-        a
-        for a in itertools.chain.from_iterable(itertools.zip_longest(*addrinfos_lists))
-        if a is not None
+        [
+            a
+            for a in itertools.chain.from_iterable(
+                itertools.zip_longest(*addrinfos_lists)
+            )
+            if a is not None
+        ]
     )
     return reordered
