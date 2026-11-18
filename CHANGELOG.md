@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.7.2 (2026-11-18)
+
+### Performance improvements
+
+- Use a list comprehension in _interleave_addrinfos ([`2d33c4f`](https://github.com/aio-libs/aiohappyeyeballs/commit/2d33c4f2522798a1735b781b3eff6cbaf2ccdc88))
+
 ## v2.7.1 (2026-07-01)
 
 ### Performance improvements
