@@ -86,21 +86,23 @@ async def start_connection(
     else:  # using happy eyeballs
         open_sockets: set[socket.socket] = set()
         try:
-            sock, _, _ = await _staggered.staggered_race(
-                (
-                    functools.partial(
-                        _connect_sock,
-                        current_loop,
-                        exceptions,
-                        addrinfo,
-                        local_addr_infos,
-                        open_sockets,
-                        socket_factory,
-                    )
-                    for addrinfo in addr_infos
-                ),
-                happy_eyeballs_delay,
-            )
+            sock = (
+                await _staggered.staggered_race(
+                    (
+                        functools.partial(
+                            _connect_sock,
+                            current_loop,
+                            exceptions,
+                            addrinfo,
+                            local_addr_infos,
+                            open_sockets,
+                            socket_factory,
+                        )
+                        for addrinfo in addr_infos
+                    ),
+                    happy_eyeballs_delay,
+                )
+            )[0]
         finally:
             # If we have a winner, staggered_race will
             # cancel the other tasks, however there is a
@@ -150,7 +152,7 @@ async def start_connection(
                 # and we raise OSError for compatibility
                 raise OSError(msg)
         finally:
-            all_exceptions = None  # type: ignore[assignment]
+            all_exceptions = first_exception = None  # type: ignore[assignment]
             exceptions = None  # type: ignore[assignment]
 
     return sock

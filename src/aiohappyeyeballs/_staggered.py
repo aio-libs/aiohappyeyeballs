@@ -106,6 +106,7 @@ async def staggered_race(
         coro_fn: Callable[[], Awaitable[_T]],
         this_index: int,
         start_next: "asyncio.Future[None]",
+        exceptions: list[BaseException | None],
     ) -> tuple[_T, int] | None:
         """
         Run a single coroutine.
@@ -126,6 +127,8 @@ async def staggered_race(
             exceptions[this_index] = e
             _set_result(start_next)  # Kickstart the next coroutine
             return None
+        finally:
+            exceptions = coro_fn = None  # type: ignore[assignment]
 
         return result, this_index
 
@@ -141,7 +144,9 @@ async def staggered_race(
                 this_index += 1
                 exceptions.append(None)
                 start_next = loop.create_future()
-                task = loop.create_task(run_one_coro(coro_fn, this_index, start_next))
+                task = loop.create_task(
+                    run_one_coro(coro_fn, this_index, start_next, exceptions)
+                )
                 tasks.add(task)
                 start_next_timer = (
                     loop.call_later(delay, _set_result, start_next) if delay else None

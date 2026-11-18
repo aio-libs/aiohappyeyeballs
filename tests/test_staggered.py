@@ -1,5 +1,7 @@
 import asyncio
+import gc
 import sys
+import weakref
 from functools import partial
 
 import pytest
@@ -85,3 +87,26 @@ def test_multiple_winners_eager_task_factory():
 
     loop.run_until_complete(run())
     loop.close()
+
+
+class _RefusedError(OSError):
+    """An OSError that can be weakly referenced."""
+
+
+@pytest.mark.asyncio
+async def test_failed_attempt_freed_without_cycle_collection():
+    """A failed attempt's exception is freed once the caller drops it."""
+
+    async def coro():
+        raise _RefusedError("refused")
+
+    gc.disable()
+    try:
+        winner, index, excs = await staggered_race([coro], delay=None)
+        assert winner is None
+        assert index is None
+        ref = weakref.ref(excs[0])
+        del excs
+        assert ref() is None
+    finally:
+        gc.enable()
