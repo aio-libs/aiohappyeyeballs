@@ -85,3 +85,24 @@ def test_multiple_winners_eager_task_factory():
 
     loop.run_until_complete(run())
     loop.close()
+
+
+@pytest.mark.asyncio
+async def test_zero_delay_starts_next_coro_immediately():
+    """A zero delay races the coroutines instead of waiting for the first to fail."""
+    release = asyncio.Event()
+
+    async def first():
+        await release.wait()
+        return "first"
+
+    async def second():
+        return "second"
+
+    winner, index, excs = await asyncio.wait_for(
+        staggered_race([first, second], delay=0), timeout=1
+    )
+    assert winner == "second"
+    assert index == 1
+    assert isinstance(excs[0], asyncio.CancelledError)
+    assert excs[1] is None
