@@ -20,27 +20,6 @@ jobs:
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
 
-  # Make sure the PR title follows the conventional commits convention:
-  # https://www.conventionalcommits.org
-  # PRs are squash-merged, so the PR title becomes the commit on main and
-  # drives python-semantic-release's version bump.
-  pr-title:
-    name: Lint PR Title
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    permissions:
-      pull-requests: read
-    steps:
-      - uses: amannn/action-semantic-pull-request@v6.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          subjectPattern: ^(?![A-Z]).+$
-          subjectPatternError: |
-            The subject "{subject}" found in the pull request title "{title}"
-            didn't match the configured pattern. Please ensure that the subject
-            starts with a lowercase character.
-
   test:
     strategy:
       fail-fast: false
@@ -112,33 +91,14 @@ jobs:
           mode: simulation
           run: poetry run pytest tests/benchmarks --codspeed --no-cov
 
-  test_release:
+  build:
+    name: Build distribution packages
     needs:
       - test
       - lint
-
     runs-on: ubuntu-latest
-    environment: test_release
-    concurrency:
-      group: release-${{ github.head_ref || github.ref }}
-      cancel-in-progress: false
-    if: github.ref_name != 'main'
-
     steps:
-      # Check out the PR branch by name from the repo it lives in; upstream
-      # branch creation is restricted, so PR branches come from forks.
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          ref: ${{ github.head_ref || github.ref_name }}
-
-      # Dry run of PSR to build the distribution
-      - name: Test release
-        uses: python-semantic-release/python-semantic-release@v10.7.0
-        with:
-          no_operation_mode: true
-
       - name: Set up uv
         uses: astral-sh/setup-uv@v10.3.3
         with:
@@ -148,81 +108,8 @@ jobs:
       - name: Install Dependencies
         run: poetry install --only main,test_build
         shell: bash
-
-      - name: Test build of distribution packages
+      - name: Build and check distribution packages
         shell: bash
         run: |
           poetry build
           poetry run python -Im twine check --strict dist/*
-
-  build_release:
-    needs:
-      - test
-      - lint
-
-    if: github.ref_name == 'main' && !startsWith(github.event.pull_request.title,'chore') && !startsWith(github.event.head_commit.message,'chore')
-
-    runs-on: ubuntu-latest
-    outputs:
-      released: ${{ steps.release.outputs.released }}
-
-    concurrency:
-      group: release-${{ github.head_ref || github.ref }}
-      cancel-in-progress: false
-    permissions:
-      id-token: write
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref || github.ref_name }}
-
-      # On main branch: Call PSR to build the distribution
-      - name: Release
-        uses: python-semantic-release/python-semantic-release@v10.7.0
-        id: release
-
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Store the distribution packages
-        uses: actions/upload-artifact@v7
-        with:
-          name: python-package-distributions
-          path: dist/
-
-  release:
-    needs:
-      - build_release
-
-    if: needs.build_release.outputs.released == 'true'
-    runs-on: ubuntu-latest
-    environment: pypi
-    concurrency:
-      group: release-${{ github.head_ref || github.ref }}
-      cancel-in-progress: false
-    permissions:
-      id-token: write
-      contents: write
-
-    steps:
-      - name: Download all the dists
-        uses: actions/download-artifact@v8
-        with:
-          name: python-package-distributions
-          path: dist/
-
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref || github.ref_name }}
-
-      - name: Publish package distributions to GitHub Releases
-        uses: python-semantic-release/upload-to-gh-release@v9.8.9
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -78,17 +78,17 @@ Ready to contribute? Here's how to set yourself up for local development.
    $ pre-commit install
    ```
 
-7. Commit your changes and push your branch to GitHub:
+7. Add a news fragment describing your change to `docs/changelog.d/`, named `<issue_or_pr_number>.<category>.md` (for example `123.bugfix.md`). See [the README in that folder](https://github.com/aio-libs/aiohappyeyeballs/blob/main/docs/changelog.d/README.md) for the categories and how to write a good entry.
+
+8. Commit your changes and push your branch to GitHub:
 
    ```shell
    $ git add .
-   $ git commit -m "feat(something): your detailed description of your changes"
+   $ git commit -m "Your detailed description of your changes"
    $ git push origin name-of-your-bugfix-or-feature
    ```
 
-   Note: the commit message should follow [the conventional commits](https://www.conventionalcommits.org). We run [`commitlint` on CI](https://github.com/marketplace/actions/commit-linter) to validate it, and if you've installed pre-commit hooks at the previous step, the message will be checked at commit time.
-
-8. Submit a pull request through the GitHub website or using the GitHub CLI (if you have it installed):
+9. Submit a pull request through the GitHub website or using the GitHub CLI (if you have it installed):
 
    ```shell
    $ gh pr create --fill
@@ -100,7 +100,8 @@ We like to have the pull request open as soon as possible, that's a great place 
 
 1. Include tests for feature or bug fixes.
 2. Update the documentation for significant features.
-3. Ensure tests are passing on CI.
+3. Add a news fragment to `docs/changelog.d/` for user-facing changes.
+4. Ensure tests are passing on CI.
 
 ## Tips
 
@@ -112,6 +113,10 @@ $ pytest tests
 
 ## Making a new release
 
-The deployment should be automated and can be triggered from the Semantic Release workflow in GitHub. The next version will be based on [the commit logs](https://python-semantic-release.readthedocs.io/en/latest/commit-log-parsing.html#commit-log-parsing). This is done by [python-semantic-release](https://python-semantic-release.readthedocs.io/en/latest/index.html) via a GitHub action.
+Releases are being moved to a tag-based workflow; see [#285](https://github.com/aio-libs/aiohappyeyeballs/issues/285). The changelog for a release is generated from the news fragments in `docs/changelog.d/` with [Towncrier](https://towncrier.readthedocs.io):
+
+```shell
+$ uvx towncrier build --version X.Y.Z
+```
 
 [gh-issues]: https://github.com/aio-libs/aiohappyeyeballs/issues

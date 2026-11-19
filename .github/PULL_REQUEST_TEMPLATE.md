@@ -34,10 +34,16 @@ Remember to prefix with 'Fixes' if it closes an issue (e.g. 'Fixes #123').
 - [ ] I think the code is well written
 - [ ] Unit tests for the changes exist
 - [ ] Documentation reflects the changes
-- [ ] The pull request title follows
-      [Conventional Commits](https://www.conventionalcommits.org)
-  - PRs are squash-merged, so the title becomes the commit message on
-    `main` and is used to generate the changelog and the next version
-  - use a type such as `feat`, `fix`, `perf`, `docs`, `test`, `ci` or
-    `chore`, followed by a lowercase subject, for example:
-    `fix: handle empty address lists when resolving hosts`
+- [ ] Add a new news fragment into the `docs/changelog.d/` folder
+  - name it `<issue_or_pr_num>.<category>.md`, for example `123.bugfix.md`
+  - if you don't have an issue number, change it to the pull request
+    number after creating the PR
+  - the categories are listed in
+    [`docs/changelog.d/README.md`](https://github.com/aio-libs/aiohappyeyeballs/blob/main/docs/changelog.d/README.md)
+  - use the past tense and explain the effect on end users, for example:
+    ```md
+    Fixed a crash when `start_connection()` received an empty list
+    of addresses -- by {user}`github-username`.
+    ```
+  - PRs that don't need a fragment (dependency bumps, CI tweaks) can get
+    the `bot:chronographer:skip` label instead
