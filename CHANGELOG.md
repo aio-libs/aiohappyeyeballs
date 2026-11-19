@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- towncrier release notes start -->
+
 ## v2.7.2 (2026-11-18)
 
 ### Performance improvements
