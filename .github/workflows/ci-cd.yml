@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - v*
   pull_request:
 
 concurrency:
@@ -68,6 +70,7 @@ jobs:
   # "Unsupported system" on ubuntu-26.04 (the current ubuntu-latest).
   benchmarks:
     name: Benchmarks (CodSpeed)
+    if: github.ref_type != 'tag'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -113,3 +116,91 @@ jobs:
         run: |
           poetry build
           poetry run python -Im twine check --strict dist/*
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  # See RELEASING.md.
+  deploy:
+    name: Deploy
+    needs:
+      - build
+    # Run only on pushing a tag
+    if: >-
+      github.event_name == 'push'
+      && github.ref_type == 'tag'
+      && github.repository == 'aio-libs/aiohappyeyeballs'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # IMPORTANT: mandatory for making GitHub Releases
+      id-token: write # IMPORTANT: mandatory for trusted publishing & sigstore
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/aiohappyeyeballs
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Download distributions
+        uses: actions/download-artifact@v8
+        with:
+          name: python-package-distributions
+          path: dist
+      - name: Collected dists
+        run: |
+          tree dist
+      # Also checks that the tag, __version__ and the built dists agree.
+      - name: Extract release notes from changelog
+        uses: aio-libs/get-releasenote@v1.4.5
+        with:
+          changes_file: CHANGELOG.md
+          output_file: release-notes.md
+          version_file: src/aiohappyeyeballs/__init__.py
+          dist_dir: dist
+          start_line: "<!-- towncrier release notes start -->"
+          # Matches Towncrier's "## 1.2.3" + "*date*" headings as well as the
+          # older "## v1.2.3 (date)" ones written by python-semantic-release.
+          head_line: '## v?{version}(?: \({date}\))?(?:\n\n\*{date}\*)?\n?'
+          check_ref: ${{ github.ref }}
+          # The change notes use MyST roles, which GitHub releases don't render.
+          fix_issue_regex: >-
+            \{issue\}`(\d+)`
+          fix_issue_repl: >-
+            #\1
+      - name: Turn the remaining MyST roles into GitHub syntax
+        shell: python
+        run: |
+          import pathlib, re
+
+          notes = pathlib.Path("release-notes.md")
+          text = re.sub(r"\{user\}`([^`]+)`", r"@\1", notes.read_text())
+          text = re.sub(r"\{commit\}`([0-9a-f]+)`", r"\1", text)
+          notes.write_text(text)
+
+      - name: >-
+          Publish 🐍📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Allow re-running the deploy job after a partial PyPI upload
+          # without failing on dists that were already published.
+          skip-existing: true
+
+      - name: Sign the dists with Sigstore
+        uses: sigstore/gh-action-sigstore-python@v3.5.0
+        with:
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
+
+      - name: Make GitHub Release
+        # Creates the release, or updates it when the deploy job is re-run.
+        uses: softprops/action-gh-release@v3.0.3
+        with:
+          body_path: release-notes.md
+          # dist/ contains the built packages plus the Sigstore signatures
+          # and certificates emitted alongside them by the signing step above.
+          files: dist/**

@@ -113,10 +113,6 @@ $ pytest tests
 
 ## Making a new release
 
-Releases are being moved to a tag-based workflow; see [#285](https://github.com/aio-libs/aiohappyeyeballs/issues/285). The changelog for a release is generated from the news fragments in `docs/changelog.d/` with [Towncrier](https://towncrier.readthedocs.io):
-
-```shell
-$ uvx towncrier build --version X.Y.Z
-```
+Releases are published by pushing a `v*` tag; the changelog is built from the news fragments with [Towncrier](https://towncrier.readthedocs.io). See [RELEASING.md](https://github.com/aio-libs/aiohappyeyeballs/blob/main/RELEASING.md) for the step-by-step guide.
 
 [gh-issues]: https://github.com/aio-libs/aiohappyeyeballs/issues

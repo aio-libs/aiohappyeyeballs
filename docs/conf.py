@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from importlib.metadata import version as get_version
 from pathlib import Path
 
 PROJECT_ROOT_DIR = Path(__file__).parents[1].resolve()
@@ -14,7 +15,7 @@ GITHUB_SPONSORS_URL = f"{GITHUB_URL}/sponsors"
 project = "aiohappyeyeballs"
 copyright = "2023, J. Nick Koston"
 author = "J. Nick Koston"
-release = "2.7.2"
+release = get_version("aiohappyeyeballs")
 
 # General configuration
 extensions = [
